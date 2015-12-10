@@ -1,5 +1,7 @@
 *.class
+target/
 
 hs_err_pid*
 
 .idea
+*.iml
