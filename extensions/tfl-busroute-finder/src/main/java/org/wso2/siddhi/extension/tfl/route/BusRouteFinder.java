@@ -40,29 +40,40 @@ import java.util.Map;
 public class BusRouteFinder extends StreamProcessor {
     private static Map<String, String> nextStopMap = new HashMap<>();
     private static Map<String, Double[]> stopPointCoords = new HashMap<>();
-    private VariableExpressionExecutor latitudeExecutor;
-    private VariableExpressionExecutor longitudeExecutor;
+    private VariableExpressionExecutor startLatitudeExecutor;
+    private VariableExpressionExecutor startLongitudeExecutor;
+    private VariableExpressionExecutor endLatitudeExecutor;
+    private VariableExpressionExecutor endLongitudeExecutor;
+    //    private VariableExpressionExecutor geoFenceExecutor;
+//    private GeoWithinFunctionExecutor withinFunctionExecutor;
 
     @Override
     protected List<Attribute> init(AbstractDefinition abstractDefinition, ExpressionExecutor[] expressionExecutors,
                                    ExecutionPlanContext executionPlanContext) {
-        if (attributeExpressionExecutors.length != 2) {
+        if (attributeExpressionExecutors.length != 4) {
             throw new ExecutionPlanValidationException("Invalid no of arguments passed to tfl:busroute(<attr> " +
-                    "latitude, <attr> longitude) function, required 2 arguments, but " +
+                    "startLat, <attr> startLon, <attr> endLat, <attr> endLon) function, required 4 arguments, but " +
                     "found " + attributeExpressionExecutors.length);
         }
-        latitudeExecutor = ((VariableExpressionExecutor) attributeExpressionExecutors[0]);
-        longitudeExecutor = ((VariableExpressionExecutor) attributeExpressionExecutors[1]);
+        startLatitudeExecutor = ((VariableExpressionExecutor) attributeExpressionExecutors[0]);
+        startLongitudeExecutor = ((VariableExpressionExecutor) attributeExpressionExecutors[1]);
+        endLatitudeExecutor = ((VariableExpressionExecutor) attributeExpressionExecutors[2]);
+        endLongitudeExecutor = ((VariableExpressionExecutor) attributeExpressionExecutors[3]);
 
-        // invoke attribute
+//        ConstantExpressionExecutor constantExpressionExecutor =
+//                "{'type': 'Circle', 'radius': 110575, 'coordinates':[" + latitude + ", " + longitude + "]}", Attribute.Type.STRING);
+//
+//        withinFunctionExecutor = new GeoWithinFunctionExecutor();
+//        withinFunctionExecutor.initExecutor(new ExpressionExecutor[]{latitudeExecutor, longitudeExecutor, geoFenceConstantExpressionExecutor});
+
         ArrayList<Attribute> attributes = new ArrayList<Attribute>(2);
         attributes.add(new Attribute("startStopCode", Attribute.Type.STRING));
         attributes.add(new Attribute("endStopCode", Attribute.Type.STRING));
         return attributes;
     }
 
-    public double distance(double lat1, double lat2, double lon1,
-                           double lon2, double el1, double el2) {
+    private double distance(double lat1, double lat2, double lon1,
+                            double lon2, double el1, double el2) {
 
         final int R = 6371; // Radius of the earth
 
@@ -81,14 +92,42 @@ public class BusRouteFinder extends StreamProcessor {
         return Math.sqrt(distance);
     }
 
+    private String findNearestStopPoint(double latitude, double longitude) {
+        double minDistance = Double.MAX_VALUE;
+        double currentDistance;
+        String nearestStopPoint = null;
+        for (Map.Entry<String, Double[]> stopCoordEntry : stopPointCoords.entrySet()) {
+            currentDistance = distance(latitude, longitude, stopCoordEntry.getValue()[0], stopCoordEntry.getValue()[1], 0.0, 0.0);
+            if (currentDistance < minDistance) {
+                minDistance = currentDistance;
+                nearestStopPoint = stopCoordEntry.getKey();
+            }
+        }
+
+        return nearestStopPoint;
+    }
+
+    private boolean isPossiblePath(String startStopPoint, String endStopPoint) {
+        String currentStopPoint = startStopPoint;
+        while (!currentStopPoint.equals(endStopPoint)) {
+            currentStopPoint = nextStopMap.get(currentStopPoint);
+            if (currentStopPoint == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     protected void process(ComplexEventChunk<StreamEvent> complexEventChunk, Processor processor,
                            StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
         Object[] data = new Object[]{Boolean.TRUE};
         while (complexEventChunk.hasNext()) {
             ComplexEvent complexEvent = complexEventChunk.next();
-            double latitude = (Double) latitudeExecutor.execute(complexEvent);
-            double longitude = (Double) longitudeExecutor.execute(complexEvent);
+            double startLat = (Double) startLatitudeExecutor.execute(complexEvent);
+            double startLon = (Double) startLongitudeExecutor.execute(complexEvent);
+            double endLat = (Double) endLatitudeExecutor.execute(complexEvent);
+            double endLon = (Double) endLongitudeExecutor.execute(complexEvent);
         }
         nextProcessor.process(complexEventChunk);
     }

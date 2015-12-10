@@ -19,7 +19,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <name>Siddhi Extension - TFL Time Trigger</name>
+    <name>Siddhi Extension - TFL Bus Route Finder</name>
     <artifactId>tfl-busroute-finder</artifactId>
     <packaging>bundle</packaging>
     <groupId>org.wso2.cep</groupId>
@@ -43,6 +43,11 @@
             <scope>test</scope>
             <version>4.10</version>
         </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.wso2.siddhi.gpl</groupId>-->
+        <!--<artifactId>siddhi-gpl-extension-geo</artifactId>-->
+        <!--<version>3.0.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>
@@ -56,8 +61,8 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.siddhi.extension.tfl.timetrigger,
-                            org.wso2.siddhi.extension.tfl.timetrigger.*
+                            org.wso2.siddhi.extension.tfl.route,
+                            org.wso2.siddhi.extension.tfl.route.*
                         </Export-Package>
                         <Import-Package>
                             *;resolution:=optional

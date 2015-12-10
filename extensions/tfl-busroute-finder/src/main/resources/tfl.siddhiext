@@ -1,1 +1,1 @@
-invoke=org.wso2.siddhi.extension.tfl.Invoke
+findRoute=org.wso2.siddhi.extension.tfl.route.BusRouteFinder
