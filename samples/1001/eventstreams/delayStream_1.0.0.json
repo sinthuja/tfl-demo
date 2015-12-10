@@ -1,0 +1,32 @@
+{
+  "name": "delayStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "delay",
+      "type": "LONG"
+    },
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "latitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "longitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
+    }
+  ]
+}

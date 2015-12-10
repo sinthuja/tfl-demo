@@ -1,0 +1,16 @@
+{
+  "name": "timeTriggerStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "invoke",
+      "type": "BOOL"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
+    }
+  ]
+}

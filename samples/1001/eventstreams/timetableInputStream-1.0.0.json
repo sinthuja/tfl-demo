@@ -1,0 +1,48 @@
+{
+  "name": "timetableInputStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "direction",
+      "type": "INT"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
+    },
+    {
+      "name": "latitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "longitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "type",
+      "type": "STRING"
+    },
+    {
+      "name": "t_day",
+      "type": "STRING"
+    },
+    {
+      "name": "t_hour",
+      "type": "INT"
+    },
+    {
+      "name": "t_minute",
+      "type": "INT"
+    }
+ ]
+}

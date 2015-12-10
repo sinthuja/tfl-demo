@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventReceiver name="BusTrafficCsvReceiver" statistics="disable"
+    trace="disable" xmlns="http://wso2.org/carbon/eventreceiver">
+    <from eventAdapterType="http">
+        <property name="transports">all</property>
+    </from>
+    <mapping customMapping="enable" type="text">
+        <property>
+            <from regex="([^,]+)"/>
+            <to name="id" type="string"/>
+        </property>
+        <property>
+            <from regex="[^,]+,([^,]+)"/>
+            <to name="name" type="string"/>
+        </property>
+        <property>
+            <from regex="[^,]+,[^,]+,([^,]+)"/>
+            <to name="direction" type="int"/>
+        </property>
+        <property>
+            <from regex="[^,]+,[^,]+,[^,]+,([^,]+)"/>
+            <to name="timeStamp" type="long"/>
+        </property>
+        <property>
+            <from regex="[^,]+,[^,]+,[^,]+,[^,]+,([^,]+)"/>
+            <to name="latitude" type="double"/>
+        </property>
+        <property>
+            <from regex="[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,([^,]+)"/>
+            <to name="longitude" type="double"/>
+        </property>
+        <property>
+            <from regex="[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,([^,]+)"/>
+            <to name="type" type="string"/>
+        </property>
+        <property>
+            <from regex="[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,([^,]+)"/>
+            <to name="speed" type="float"/>
+        </property>
+        <property>
+            <from regex="[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,[^,]+,([^,]+)"/>
+            <to name="heading" type="float"/>
+        </property>
+    </mapping>
+    <to streamName="rawInputStream" version="1.0.0"/>
+</eventReceiver>

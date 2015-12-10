@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="DefaultWebsocketOutputAdaptor"
+  statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="fusedSpatialEvent" version="1.0.0"/>
+  <mapping customMapping="enable" type="json">
+    <inline>
+{
+  "messageType" : "Point",
+  "type": "Feature",
+  "id": {{id}},
+  "properties": {
+        "name": {{name}},
+        "direction": {{direction}},
+        "speed": {{speed}},
+        "heading": {{heading}},
+        "state": {{state}},
+        "information": {{information}},
+        "notify": {{notify}},
+        "type": {{type}}
+      },
+  "geometry": {
+        "type": "Point",
+        "coordinates": [{{longitude}},{{latitude}}]
+      }
+}
+    </inline>
+  </mapping>
+  <to eventAdapterType="websocket-local"/>
+</eventPublisher>

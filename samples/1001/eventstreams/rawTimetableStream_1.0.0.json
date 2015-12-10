@@ -1,0 +1,32 @@
+{
+  "name": "rawTimetableStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "direction",
+      "type": "INT"
+    },
+    {
+      "name": "t_day",
+      "type": "STRING"
+    },
+    {
+      "name": "t_hour",
+      "type": "INT"
+    },
+    {
+      "name": "t_minute",
+      "type": "INT"
+    }
+  ]
+}
