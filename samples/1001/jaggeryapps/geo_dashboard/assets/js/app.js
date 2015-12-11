@@ -63,12 +63,12 @@ function success(position) {
 
 
 function initializeMap() {
-    if (typeof(map) !== 'undefined'){
+    if (typeof(map) !== 'undefined') {
         map.remove();
     }
     map = L.map("map", {
         zoom: 14,
-        center: [51.548525, 0.111749],
+        center: [51.5159356, -0.1298357],
         layers: [defaultOSM, defaultTFL],
         zoomControl: false,
         attributionControl: true,
@@ -80,32 +80,31 @@ function initializeMap() {
         $.UIkit.offcanvas.hide();//[force = false] no animation
     });
 
-    map.on('zoomend', function(){
-        if(map.getZoom() < 14){
+    map.on('zoomend', function () {
+        if (map.getZoom() < 14) {
             // remove busStops
             var layer;
             for (var key in currentSpatialObjects) {
                 if (currentSpatialObjects.hasOwnProperty(key)) {
                     object = currentSpatialObjects[key];
-                    if(object.type =="STOP")
+                    if (object.type == "STOP")
                         map.removeLayer(object.geoJson);
                 }
             }
             console.log("removed busStops from map");
-        }else{
-
+        } else {
             var layer;
             for (var key in currentSpatialObjects) {
                 if (currentSpatialObjects.hasOwnProperty(key)) {
                     object = currentSpatialObjects[key];
-                    if(object.type == "STOP")
+                    if (object.type == "STOP")
                         map.addLayer(object.geoJson);
                 }
             }
             console.log("added busStops to map");
         }
-
     });
+    populateStopPoints();
 }
 
 /* Attribution control */
@@ -137,8 +136,7 @@ L.control.zoom({
 }).addTo(map);
 
 var groupedOverlays = {
-    "Web Map Service layers": {
-    }
+    "Web Map Service layers": {}
 };
 
 var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
@@ -159,7 +157,7 @@ var substringMatcher = function () {
         substrRegex = new RegExp(q, 'i');
         $.each(currentSpatialObjects, function (i, str) {
             if (substrRegex.test(i)) {
-                matches.push({ value: i });
+                matches.push({value: i});
             }
         });
 
@@ -198,7 +196,7 @@ function createPredictionChart() {
     predictionChart = c3.generate({
         bindto: '#prediction_chart_div',
         data: {
-            x : 'x',
+            x: 'x',
             columns: [
                 ['traffic']
             ]
@@ -243,7 +241,7 @@ $('#searchbox').typeahead({
 
 var toggled = false;
 function focusOnSpatialObject(objectId) {
-    console.log("Selecting"+objectId);
+    console.log("Selecting" + objectId);
     var spatialObject = currentSpatialObjects[objectId];// (local)
     if (!spatialObject) {
         $.UIkit.notify({
@@ -257,8 +255,8 @@ function focusOnSpatialObject(objectId) {
     clearFocus(); // Clear current focus if any
     selectedSpatialObject = objectId; // (global) Why not use 'var' other than implicit declaration http://stackoverflow.com/questions/1470488/what-is-the-function-of-the-var-keyword-and-when-to-use-it-or-omit-it#answer-1471738
 
-    console.log("Selected "+objectId+ " type " + spatialObject.type);
-    if(spatialObject.type == "area") {
+    console.log("Selected " + objectId + " type " + spatialObject.type);
+    if (spatialObject.type == "area") {
         spatialObject.focusOn(map);
         return true;
     }

@@ -287,7 +287,6 @@ SpatialObject.prototype.stateIcon = function () {
 };
 
 function processTrafficMessage(json) {
-
     if (json.id in currentSpatialObjects) {
         var existingObject = currentSpatialObjects[json.id];
         existingObject.update(json);

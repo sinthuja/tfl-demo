@@ -549,6 +549,32 @@ function setProximityAlert() {
     }
 }
 
+function populateStopPoints() {
+    $.getJSON("controllers/get_stop_points.jag", function (data) {
+        $.each(data, function (key, val) {
+            processPointMessage({
+                "messageType" : "Point",
+                "type": "Feature",
+                "id": val.ID,
+                "properties": {
+                    "name": val.NAME,
+                    "direction": val.DIRECTION,
+                    "speed": 0.0,
+                    "heading": 0.0,
+                    "state": "ON TIME",
+                    "information": "",
+                    "notify": false,
+                    "type": "STOP"
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [val.LONGITUDE,val.LATITUDE]
+                }
+            });
+        });
+    });
+}
+
 // TODO:this is not a remote call , move this to application.js
 function createExecutionPlanName(queryName,id) {
 
