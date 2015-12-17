@@ -56,8 +56,8 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.siddhi.extension.tfl.timetrigger,
-                            org.wso2.siddhi.extension.tfl.timetrigger.*
+                            org.wso2.siddhi.extension.tfl,
+                            org.wso2.siddhi.extension.tfl.*
                         </Export-Package>
                         <Import-Package>
                             *;resolution:=optional
