@@ -11,3 +11,7 @@ extensions/tfl-time-trigger/target/maven-status/maven-compiler-plugin/compile/de
 extensions/tfl-time-trigger/target/classes/META-INF/MANIFEST.MF
 
 extensions/tfl-time-trigger/tfl-time-trigger.iml
+
+stanford-nlp_3.4.0.wso2v1.jar
+
+

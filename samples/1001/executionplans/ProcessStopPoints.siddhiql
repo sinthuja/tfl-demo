@@ -22,30 +22,29 @@ define table busTimeTable (id string, name string, direction int, t_day string, 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
 define table stopTable (id string, name string, direction int, latitude double, longitude double);
 
+@IndexBy('stopId')
 define table stopArivalTable (stopId string, busId string, timeStamp long, isArrived bool);
 
-from busArrivalDepartureStream 
-insert into stopArivalTable;
-
-from timeTriggerStream 
+from timeTriggerStream
 select time:extract(timeStamp,'HOUR') as t_hour, time:extract(timeStamp, 'MINUTE') as t_minute, timeStamp
 insert into postTimeTriggerStream;
 
 from postTimeTriggerStream join busTimeTable
 on postTimeTriggerStream.t_hour == busTimeTable.t_hour AND postTimeTriggerStream.t_minute == busTimeTable.t_minute
 select timeStamp, id as stopId, name as stopName, direction
-insert into stopTriggerStream; 
+insert into stopTriggerStream;
 
-from stopTriggerStream join stopArivalTable 
+from stopTriggerStream join stopArivalTable
 on stopTriggerStream.stopId == stopArivalTable.stopId
 select stopTriggerStream.stopId, stopArivalTable.busId, stopTriggerStream.timeStamp, stopArivalTable.timeStamp as lastArrivedTimestamp, stopArivalTable.isArrived
 insert into lateDecisionStream;
 
 from lateDecisionStream[isArrived!=true AND (timeStamp- lastArrivedTimestamp) > 60000]#window.length(1) join  stopTable
+on stopTable.id == lateDecisionStream.stopId
 select timeStamp, stopTable.id, stopTable.latitude, stopTable.longitude, stopTable.name, "DELAYED" as status
 insert into lateAlertStream;
 
-from e1=lateAlertStream -> e2=busArrivalDepartureStream[e2.stopId == e1.id]
+from every e1=lateAlertStream -> e2=busArrivalDepartureStream[e2.stopId == e1.id]
 select e2.timeStamp- e1.timeStamp as delay, e1.id, e1.latitude, e1.longitude, e1.name, e2.timeStamp
 insert into delayStream;
 
@@ -54,5 +53,8 @@ select timeStamp, id, latitude, longitude, name, "ON TIME" as status
 insert into lateAlertStream;
 
 from lateAlertStream
-select id, name, 1 as direction, latitude, longitude, timeStamp, 'STOP' as type, 0f as speed, 0f as heading, status as state, str:concat("Bus arrived ", status) as information, false as notify
+select id, name, 1 as direction, latitude, longitude, timeStamp, 'STOP' as type, 0f as speed, 0f as heading, status as state, str:concat("Bus ", status) as information, false as notify
 insert into fusedStream;
+
+from busArrivalDepartureStream
+insert into stopArivalTable;

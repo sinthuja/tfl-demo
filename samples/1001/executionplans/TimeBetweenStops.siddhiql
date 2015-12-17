@@ -9,7 +9,7 @@
 @Import('busArrivalDepartureStream:1.0.0')
 define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
 
-@From(eventtable='rdbms', datasource.name='WSO2_ML_DB', table.name='TimeBetweenStopsTable')
+--@From(eventtable='rdbms', datasource.name='WSO2_ML_DB', table.name='TimeBetweenStopsTable')
 define table timeBetweenStopsTable (stopId string, prevStopId string, timeStamp long, t_hour int, timeTaken long);
 
 from every e1 = busArrivalDepartureStream[isArrived == true] -> e2 = busArrivalDepartureStream[isArrived == true AND e1.busId == busId AND e1.stopId != stopId]
