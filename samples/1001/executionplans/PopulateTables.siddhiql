@@ -1,0 +1,25 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('PopulateTables')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+@Import('rawTimetableStream:1.0.0')
+define stream rawTimetableStream (id string, name string, direction int, t_day string, t_hour int, t_minute int);
+
+@Import('rawStopPointStream:1.0.0')
+define stream rawStopPointStream (id string, name string, direction int, latitude double, longitude double);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (id string, name string, direction int, latitude double, longitude double);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='BusStopTimeTable')
+define table busTimeTable (id string, name string, direction int, t_day string, t_hour int, t_minute int, minutesInDay int);
+
+from rawStopPointStream
+insert into stopTable;
+
+from rawTimetableStream
+select id, name, direction, t_day, t_hour, t_minute, (t_hour * 60 + t_minute) as minutesInDay
+insert into busTimeTable;

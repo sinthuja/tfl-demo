@@ -1,0 +1,17 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('TimeBetweenStops')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('busArrivalDepartureStream:1.0.0')
+define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
+
+@From(eventtable='rdbms', datasource.name='WSO2_ML_DB', table.name='TimeBetweenStopsTable')
+define table timeBetweenStopsTable (stopId string, prevStopId string, timeStamp long, t_hour int, timeTaken long);
+
+from e1 = busArrivalDepartureStream[isArrived == true] -> e2 = busArrivalDepartureStream[isArrived == true AND e1.busId == busId]
+select e2.stopId, e1.stopId as prevStopId, e1.timeStamp, time:extract(e1.timeStamp, 'HOUR') as t_hour, (e2.timeStamp - e1.timeStamp) as timeTaken
+insert into timeBetweenStopsTable;

@@ -1,0 +1,36 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('BusArrivalDepartureTracker')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('rawBusStream:1.0.0')
+define stream rawBusStream (id string, name string, direction int, timeStamp long, latitude double, longitude double, type string, speed float, heading float);
+
+@Export('busArrivalDepartureStream:1.0.0')
+define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (id string, name string, direction int, latitude double, longitude double);
+
+define trigger stopTableTrigger at 'start';
+
+from stopTableTrigger join stopTable
+select str:concat("s-",direction,"-",id) as id, latitude, longitude, 0l as timeStamp
+insert into preProximityStream;
+
+from rawBusStream 
+select str:concat("b-",direction,"-",id) as id, latitude, longitude, timeStamp
+insert into preProximityStream;
+
+from preProximityStream#geo:proximity(id, latitude, longitude, 5.0)
+select id, latitude, longitude, inCloseProximity, proximityWith, timeStamp
+having str:contains(id, "b-") AND str:contains(proximityWith, "s-") AND ((str:contains(proximityWith, "-1-") AND str:contains(id, "-1-")) 
+																	   OR (str:contains(proximityWith, "-2-") AND str:contains(id, "-2-")))
+insert into proximityStream;
+
+from proximityStream
+select str:substr(proximityWith, 4) as stopId, str:substr(id, 4) as busId, timeStamp, inCloseProximity as isArrived 
+insert into busArrivalDepartureStream;

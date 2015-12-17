@@ -1,0 +1,28 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('RecalculateBusTimeTable')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+@Import('busArrivalDepartureStream:1.0.0')
+define stream stopArivalStream (stopId string, busId string, timeStamp long, isArrived bool);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (id string, name string, direction int, latitude double, longitude double);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='TempBusStopTimeTable')
+define table busTimeTable (id string, name string, direction int, t_day string, t_hour int, t_minute int);
+
+from every e1 = stopArivalStream[isArrived == true] -> e2 = stopArivalStream[(e1.stopId == e2.stopId) AND (e1.busId == e2.busId) AND (e2.isArrived != true)]
+select e1.stopId as id, (e1.timeStamp + e2[0].timeStamp) / 2 as timeStamp, (e2[0].timeStamp - e1.timeStamp) as wait
+insert into timeTableStream;
+
+from timeTableStream as t join stopTable as s
+on s.id == t.id
+select t.id as id, s.name as name, s.direction as direction, 'Monday' as t_day, time:extract(t.timeStamp,'HOUR') as t_hour, time:extract(t.timeStamp, 'MINUTE') as t_minute, t.wait as wait
+insert into preTimeTable;
+
+from preTimeTable[wait >= 36000] -- means that, bus kept max 1kmph within range
+select id, name, direction, t_day, t_hour, t_minute
+insert into busTimeTable;

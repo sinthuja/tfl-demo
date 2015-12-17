@@ -6,12 +6,12 @@
 
 /* define streams/tables and write queries here ... */
 
-@Import('rawInputStream:1.0.0')
+@Import('rawBusStream:1.0.0')
 define stream dataIn (id string, name string, direction int, timeStamp long, latitude double, longitude double, type string, speed float, heading float);
 
 @Export('timeTriggerStream:1.0.0')
 define stream dataOut (invoke bool, timeStamp long);
 
-from dataIn#tfl:invoke(timeStamp, 30000L)
+from dataIn#tfl:invoke(timeStamp, 60000L)
 select invoke, timeStamp
 insert into dataOut;

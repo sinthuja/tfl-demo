@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><streamConfiguration type="csv"><file>tfl-bus-stop-data.csv</file><streamID>rawStopPointStream:1.0.0</streamID><separateChar>,</separateChar><delayBetweenEventsInMilies>5</delayBetweenEventsInMilies></streamConfiguration>
