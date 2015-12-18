@@ -64,7 +64,7 @@ public class DataPoller extends Thread {
         } else {
             trafficURL = liveTrafficURL;
             busURL = String.format(liveBusURL, StringUtils.join(busLineIds, ','));
-            busStopURL = String.format(liveBusStopURL, StringUtils.join(busLineIds, ','), "%d");
+            busStopURL = liveBusStopURL;
         }
     }
 
@@ -215,31 +215,34 @@ public class DataPoller extends Thread {
             ArrayList<String> csvBusStopList = new ArrayList<String>();
             ArrayList<String> stops = new ArrayList<String>();
 
-            for (int direction : directions) {
-                String[] arr;
-                URL obj = new URL(String.format(busStopURL, direction));
-                con = (HttpURLConnection) obj.openConnection();
-                con.setRequestMethod("GET");
+            for (String lineId : busLineIds) {
+                for (int direction : directions) {
+                    String[] arr;
+                    URL obj = new URL(String.format(busStopURL, lineId, direction));
+                    con = (HttpURLConnection) obj.openConnection();
+                    con.setRequestMethod("GET");
 
-                int responseCode = con.getResponseCode();
-                log.info("\nSending 'GET' request to URL : " + busStopURL);
-                log.info("Response Code : " + responseCode);
+                    int responseCode = con.getResponseCode();
+                    log.info("\nSending 'GET' request to URL : " + busStopURL);
+                    log.info("Response Code : " + responseCode);
 
-                in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                inputLine = in.readLine();
-                inputLine = inputLine.replaceAll("[\\[\\]\"]", "");
-                arr = inputLine.split(",");
-                TflStream.timeOffset = System.currentTimeMillis() - Long.parseLong(arr[2]);
-
-                while ((inputLine = in.readLine()) != null) {
+                    in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    String inputLine;
+                    inputLine = in.readLine();
                     inputLine = inputLine.replaceAll("[\\[\\]\"]", "");
                     arr = inputLine.split(",");
-                    if (!stops.contains(arr[2]) && validStopTypes.contains(arr[3])) {
-                        BusStop busStop = new BusStop(arr[2], arr[1], direction, Double.parseDouble(arr[4]), Double.parseDouble(arr[5]));
-                        TflStream.map.put(arr[2], busStop);
-                        csvBusStopList.add(busStop.toCsv());
-                        stops.add(arr[2]);
+                    TflStream.timeOffset = System.currentTimeMillis() - Long.parseLong(arr[2]);
+
+                    while ((inputLine = in.readLine()) != null) {
+                        inputLine = inputLine.replaceAll("[\\[\\]\"]", "");
+                        arr = inputLine.split(",");
+                        if (!stops.contains(arr[2]) && validStopTypes.contains(arr[3])) {
+                            String line = (lineId.contains("N")) ? lineId.substring(1) : lineId;
+                            BusStop busStop = new BusStop(arr[2], arr[1], direction, Double.parseDouble(arr[4]), Double.parseDouble(arr[5]), line);
+                            TflStream.map.put(arr[2], busStop);
+                            csvBusStopList.add(busStop.toCsv());
+                            stops.add(arr[2]);
+                        }
                     }
                 }
             }
@@ -264,9 +267,9 @@ public class DataPoller extends Thread {
 
     public void run() {
         if (isBus) {
-            getTimetables();
+            // getTimetables();
             getStops();
-            getBus();
+            // getBus();
         } else {
             getDisruptions();
         }

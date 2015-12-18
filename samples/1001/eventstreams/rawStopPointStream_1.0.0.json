@@ -23,6 +23,10 @@
     {
       "name": "longitude",
       "type": "DOUBLE"
+    },
+    {
+      "name": "line",
+      "type": "STRING"
     }
   ]
 }

@@ -9,10 +9,10 @@
 define stream rawTimetableStream (id string, name string, direction int, t_day string, t_hour int, t_minute int);
 
 @Import('rawStopPointStream:1.0.0')
-define stream rawStopPointStream (id string, name string, direction int, latitude double, longitude double);
+define stream rawStopPointStream (id string, name string, direction int, latitude double, longitude double, line string);
 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
-define table stopTable (id string, name string, direction int, latitude double, longitude double);
+define table stopTable (id string, name string, direction int, latitude double, longitude double, line string);
 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='BusStopTimeTable')
 define table busTimeTable (id string, name string, direction int, t_day string, t_hour int, t_minute int, minutesInDay int);

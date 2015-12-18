@@ -13,7 +13,7 @@ define stream rawBusStream (id string, name string, direction int, timeStamp lon
 define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
-define table stopTable (id string, name string, direction int, latitude double, longitude double);
+define table stopTable (id string, name string, direction int, latitude double, longitude double, line string);
 
 define trigger stopTableTrigger at 'start';
 
