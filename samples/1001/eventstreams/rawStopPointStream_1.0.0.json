@@ -1,15 +1,30 @@
 {
+  "streamId": "rawStopPointStream:1.0.0",
   "name": "rawStopPointStream",
   "version": "1.0.0",
   "nickName": "",
   "description": "",
+  "metaData": [],
+  "correlationData": [],
   "payloadData": [
+    {
+      "name": "name",
+      "type": "STRING"
+    },
     {
       "name": "id",
       "type": "STRING"
     },
     {
-      "name": "name",
+      "name": "naptan",
+      "type": "STRING"
+    },
+    {
+      "name": "sequence",
+      "type": "INT"
+    },
+    {
+      "name": "line",
       "type": "STRING"
     },
     {
@@ -23,10 +38,6 @@
     {
       "name": "longitude",
       "type": "DOUBLE"
-    },
-    {
-      "name": "line",
-      "type": "STRING"
     }
   ]
 }

@@ -7,18 +7,20 @@
 /* define streams/tables and write queries here ... */
 
 @Import('rawBusStream:1.0.0')
-define stream rawBusStream (id string, name string, direction int, timeStamp long, latitude double, longitude double, type string, speed float, heading float);
+define stream rawBusStream (id string, name string, direction int, timeStamp long, latitude double,
+							longitude double, type string, speed float, heading float);
 
 @Export('busArrivalDepartureStream:1.0.0')
 define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
-define table stopTable (id string, name string, direction int, latitude double, longitude double, line string);
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
+						latitude double, longitude double);
 
 define trigger stopTableTrigger at 'start';
 
 from stopTableTrigger join stopTable
-select str:concat("s-",direction,"-",id) as id, latitude, longitude, 0l as timeStamp
+select str:concat("s-", direction, "-", id) as id, latitude, longitude, 0l as timeStamp
 insert into preProximityStream;
 
 from rawBusStream 
