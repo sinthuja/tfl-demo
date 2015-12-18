@@ -1,8 +1,11 @@
 {
+  "streamId": "rawStopPointStream:1.0.0",
   "name": "rawStopPointStream",
   "version": "1.0.0",
   "nickName": "",
   "description": "",
+  "metaData": [],
+  "correlationData": [],
   "payloadData": [
     {
       "name": "name",
