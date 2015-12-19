@@ -9,8 +9,9 @@
 define stream stopArivalStream (stopId string, busId string, timeStamp long, isArrived bool);
 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
-define table stopTable (id string, name string, direction int, latitude double, longitude double, line string);
-
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
+						latitude double, longitude double);
+						
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='TempBusStopTimeTable')
 define table busTimeTable (id string, name string, direction int, t_day string, t_hour int, t_minute int);
 
