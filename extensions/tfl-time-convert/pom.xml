@@ -19,8 +19,8 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <name>Siddhi Extension - Geo Event Fuser</name>
-    <artifactId>geo-event-fuser</artifactId>
+    <name>Siddhi Extension - TFL Time Converter</name>
+    <artifactId>tfl-time-converter</artifactId>
     <packaging>bundle</packaging>
     <groupId>org.wso2.cep</groupId>
     <version>4.0.0</version>
@@ -33,6 +33,11 @@
             <version>3.0.3</version>
         </dependency>
         <dependency>
+            <groupId>org.wso2.siddhi</groupId>
+            <artifactId>siddhi-query-api</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.log4j.wso2</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17.wso2v1</version>
@@ -42,11 +47,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
             <version>4.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.logging</artifactId>
-            <version>4.4.2</version>
         </dependency>
     </dependencies>
 
@@ -61,8 +61,8 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.siddhi.extension.geo.geoeventfuser,
-                            org.wso2.siddhi.extension.geo.geoeventfuser.*
+                            org.wso2.siddhi.extension.tfl.time,
+                            org.wso2.siddhi.extension.tfl.time.*
                         </Export-Package>
                         <Import-Package>
                             *;resolution:=optional
@@ -83,7 +83,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.1</version>
                 <configuration>
                     <preparationGoals>clean install</preparationGoals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>

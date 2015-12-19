@@ -14,7 +14,6 @@ define stream dataIn (id string, name string, direction int, timeStamp long, lat
 @Export('standardSpatialEvents:1.0.0')
 define stream dataOut (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string ); 
 
--- (timeStamp - 19800000l) will remove timezone difference [19800000l equal to 5.5 hours]
 from dataIn
-select id, name, direction, latitude, longitude, (timeStamp - 19800000l) as timeStamp, type ,speed, heading, UUID() as eventId
+select id, name, direction, latitude, longitude, tfl:toGMT(timeStamp) as timeStamp, type ,speed, heading, UUID() as eventId
 insert into dataOut
