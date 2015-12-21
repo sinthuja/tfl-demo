@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="HTTPPublisher" statistics="disable"
+  trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="twitterOutputStream" version="1.0.0"/>
+  <mapping customMapping="disable" type="json"/>
+  <to eventAdapterType="http">
+    <property name="http.client.method">HttpPost</property>
+    <property name="http.url">http://localhost:8280/services/twitter_updateStatus</property>
+  </to>
+</eventPublisher>

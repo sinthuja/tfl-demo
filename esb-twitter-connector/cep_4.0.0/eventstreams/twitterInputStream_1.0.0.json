@@ -1,0 +1,16 @@
+{
+  "name": "twitterInputStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "twitterData",
+      "type": "STRING"
+    },
+    {
+      "name": "screenName",
+      "type": "STRING"
+    }
+  ]
+}

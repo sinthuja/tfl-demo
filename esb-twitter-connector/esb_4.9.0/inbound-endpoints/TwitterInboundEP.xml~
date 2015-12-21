@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inboundEndpoint xmlns="http://ws.apache.org/ns/synapse"
+                 name="TwitterInboundEP"
+                 sequence="reqSequence"
+                 onError="reqErrorSequence"
+                 class="org.wso2.carbon.inbound.twitter.poll.TwitterStreamData"
+                 suspend="false">
+   <parameters>
+      <parameter name="sequential">true</parameter>
+      <parameter name="twitter.operation">filter</parameter>
+      <parameter name="connection.twitter.accessSecret">GFzznPDAX3lvpZ6AWPzd4PsqEBcwxWmFV2JJV52liB9FG</parameter>
+      <parameter name="interval">10</parameter>
+      <parameter name="twitter.track">#cep_tweet</parameter>
+      <parameter name="connection.twitter.consumerKey">JCKy0JoSf4pd8OlvYlV045pPp</parameter>
+      <parameter name="coordination">true</parameter>
+      <parameter name="connection.twitter.accessToken">2457554256-NyWoiPzKRhw0k4vLyQ17DcDviNajtRMGCDEVM4u</parameter>
+      <parameter name="connection.twitter.consumerSecret">Pw6ZZ3nVcTj5jUK8JwjVHY2C2m79pcjOJCBmgrzFHzNcNVyzzq</parameter>
+   </parameters>
+</inboundEndpoint>
