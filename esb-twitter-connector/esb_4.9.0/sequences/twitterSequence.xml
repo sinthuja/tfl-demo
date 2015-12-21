@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse"
+          name="twitterSequence"
+          onError="fault"
+          trace="disable">
+   <in>
+      <log level="full">
+         <property name="test" value="log before payload"/>
+      </log>
+      <payloadFactory media-type="json">
+         <format>{"event": { "payloadData": {"twitterData":"$1","screenName":"$2"}
+}
+}</format>
+         <args>
+            <arg evaluator="json" expression="$.text"/>
+            <arg evaluator="json" expression="$.user.screen_name"/>
+         </args>
+      </payloadFactory>
+      <property name="messageType" value="application/json" scope="axis2"/>
+      <property name="OUT_ONLY" value="true"/>
+      <log level="full">
+         <property name="test" value="log after payload"/>
+      </log>
+      <send>
+         <endpoint key="HttpEP"/>
+      </send>
+   </in>
+   <out>
+      <log/>
+   </out>
+   <description>Sequence for the twitter inbound connector message mediation</description>
+</sequence>
