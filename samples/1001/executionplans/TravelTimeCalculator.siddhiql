@@ -1,0 +1,49 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('TravelTimeCalculator')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('travelTimeRequestStream:1.0.0')
+define stream travelTimeRequestStream (fromCity string, toCity string, time long, name string);
+
+@Import('travelTimeStream:1.0.0')
+define stream travelTimeStream (from string, to string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int, hour string);
+
+@Export('travelTimeResponseStream:1.0.0')
+define stream travelTimeResponseStream (from string, to string, currentTravelTimeByBus int, predictedTravelTimeByBus int,
+										historicTravelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+
+define table travelTimeTable (from string, to string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int, hour string);
+
+from travelTimeStream
+insert into travelTimeTable;
+
+from travelTimeRequestStream
+select fromCity as from, 
+		fromCity as to, 
+		0 as travelTimeByBus,
+		0 as travelTimeByBike, 
+		0 as travelTimeOnFoot, 
+		toCity as destination
+insert into tableJoinResultStream;
+
+from tableJoinResultStream[to == destination]
+select from, to, -1 as currentTravelTimeByBus, -1 as predictedTravelTimeByBus, travelTimeByBus as historicTravelTimeByBus,
+		travelTimeByBike, travelTimeOnFoot
+insert into travelTimeResponseStream;
+
+from tableJoinResultStream[to != destination]
+insert into joinWithTimeTableStream;
+
+from joinWithTimeTableStream join travelTimeTable 
+on travelTimeTable.from == joinWithTimeTableStream.to
+select joinWithTimeTableStream.from,
+		travelTimeTable.to, 
+		(joinWithTimeTableStream.travelTimeByBus + travelTimeTable.travelTimeByBus) as travelTimeByBus, 
+		(joinWithTimeTableStream.travelTimeByBike + travelTimeTable.travelTimeByBike) as travelTimeByBike, 
+		(joinWithTimeTableStream.travelTimeOnFoot + travelTimeTable.travelTimeOnFoot) as travelTimeOnFoot, 
+	   	destination
+insert into tableJoinResultStream;
