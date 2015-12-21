@@ -1,0 +1,16 @@
+{
+  "name": "delaysCountStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "line",
+      "type": "STRING"
+    },
+    {
+      "name": "delays",
+      "type": "LONG"
+    }
+  ]
+}

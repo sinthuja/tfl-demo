@@ -12,6 +12,12 @@ define stream busArrivalDepartureStream (stopId string, busId string, timeStamp 
 @Import('timeTriggerStream:1.0.0')
 define stream timeTriggerStream (invoke bool, timeStamp long);
 
+@Export('delaysCountStream:1.0.0')
+define stream delaysCountStream (line string, delays long);
+
+@Export('currentDelaysStream:1.0.0')
+define stream currentDelaysStream (line string, delays long);
+
 @Export('fusedSpatialEvent:1.0.0')
 define stream fusedStream (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, 
 						   heading float, state string, information string, notify bool);
@@ -42,20 +48,30 @@ insert into lateDecisionStream;
 
 from lateDecisionStream[isArrived!=true AND (timeStamp- lastArrivedTimestamp) > 60000]#window.length(1) join  stopTable
 on stopTable.id == lateDecisionStream.stopId
-select timeStamp, stopTable.id, stopTable.latitude, stopTable.longitude, stopTable.name, "DELAYED" as status
+select timeStamp, stopTable.id, stopTable.latitude, stopTable.longitude, stopTable.name, "DELAYED" as status, stopTable.line
 insert into lateAlertStream;
 
 from every e1=lateAlertStream -> e2=busArrivalDepartureStream[e2.stopId == e1.id]
-select e2.timeStamp- e1.timeStamp as delay, e1.id, e1.latitude, e1.longitude, e1.name, e2.timeStamp
+select e2.timeStamp- e1.timeStamp as delay, e1.id, e1.latitude, e1.longitude, e1.name, e2.timeStamp, e1.line
 insert into delayStream;
 
 from delayStream 
-select timeStamp, id, latitude, longitude, name, "ON TIME" as status
+select timeStamp, id, latitude, longitude, name, "ON TIME" as status, line
 insert into lateAlertStream;
 
 from lateAlertStream
 select id, name, 1 as direction, latitude, longitude, timeStamp, 'STOP' as type, 0f as speed, 0f as heading, status as state, str:concat("Bus ", status) as information, false as notify
 insert into fusedStream;
+
+from lateAlertStream[status == "DELAYED"]
+select line, count() as delays
+group by line
+insert into delaysCountStream;
+
+from delaysCountStream#window.timeBatch(15 seconds)
+select line, count() as delays
+group by line
+insert into currentDelaysStream;
 
 from busArrivalDepartureStream
 insert into stopArivalTable;

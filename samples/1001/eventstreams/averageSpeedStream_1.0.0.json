@@ -1,0 +1,20 @@
+{
+  "name": "averageSpeedStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "averageSpeed",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "route",
+      "type": "STRING"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
+    }
+  ]
+}

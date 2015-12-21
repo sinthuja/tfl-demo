@@ -1,0 +1,50 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('CalculateStatistics')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('standardSpatialEvents:1.0.0')
+define stream inputStream (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string);
+
+@Import('busArrivalDepartureStream:1.0.0')
+define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
+
+@Export('busCountStream:1.0.0')
+define stream busCountStream (busses long, route string);
+
+@Export('averageSpeedStream:1.0.0')
+define stream outputStream (averageSpeed double, route string, timeStamp long);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
+						latitude double, longitude double);
+
+@IndexBy('id')
+define table busTable (id string, line string);
+
+from busArrivalDepartureStream as b join stopTable as s
+on b.stopId == s.id
+select b.busId as id, s.line as line
+insert into #busInfoStream;
+
+from #busInfoStream
+insert into busTable;
+
+from #busInfoStream
+select count() as busses, line as route
+group by line
+insert into busCountStream;
+
+from inputStream as i join busTable as b
+on i.id == b.id
+select i.speed, i.timeStamp, b.line
+insert into #preSpeedStream;
+
+from #preSpeedStream[speed >= 0]#window.externalTime(timeStamp, 60 sec)
+select math:round(avg(speed)* 100)/100.0 as averageSpeed, line as route, timeStamp
+group by line
+output last every 1 sec
+insert into outputStream;
