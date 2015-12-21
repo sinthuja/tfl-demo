@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<eventReceiver name="HTTPReceiver" statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventreceiver">
+<eventReceiver name="TwitterReceiver" statistics="disable"
+    trace="disable" xmlns="http://wso2.org/carbon/eventreceiver">
     <from eventAdapterType="http">
         <property name="transports">all</property>
     </from>

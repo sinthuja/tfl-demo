@@ -1,5 +1,5 @@
 /* Enter a unique ExecutionPlan */
-@Plan:name('TwitterStreamConcatenation')
+@Plan:name('NaturalLanguageProcessor')
 
 /* Enter a unique description for ExecutionPlan */
 -- @Plan:description('ExecutionPlan')
