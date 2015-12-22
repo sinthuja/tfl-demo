@@ -9,41 +9,66 @@
 @Import('travelTimeRequestStream:1.0.0')
 define stream travelTimeRequestStream (fromCity string, toCity string, time long, name string);
 
-@Import('travelTimeStream:1.0.0')
-define stream travelTimeStream (from string, to string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int, hour string);
-
 @Export('travelTimeResponseStream:1.0.0')
 define stream travelTimeResponseStream (from string, to string, currentTravelTimeByBus int, predictedTravelTimeByBus int,
-										historicTravelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+										historicTravelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int, name String);
 
-define table travelTimeTable (from string, to string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int, hour string);
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='TravelTimeTable')
+define table travelTimeTable (fromStop string, toStop string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
 
-from travelTimeStream
-insert into travelTimeTable;
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
+						latitude double, longitude double);
+						
+from travelTimeRequestStream join stopTable
+on travelTimeRequestStream.fromCity == stopTable.name
+select stopTable.id as fromCity, toCity, time, travelTimeRequestStream.name
+insert into intermediateTravelTimeRequestStream;
 
-from travelTimeRequestStream
+from intermediateTravelTimeRequestStream join stopTable
+on intermediateTravelTimeRequestStream.toCity == stopTable.name
+select fromCity, stopTable.id as toCity, time, intermediateTravelTimeRequestStream.name
+insert into enrichedTravelTimeRequestStream;
+
+from enrichedTravelTimeRequestStream
 select fromCity as from, 
 		fromCity as to, 
 		0 as travelTimeByBus,
 		0 as travelTimeByBike, 
 		0 as travelTimeOnFoot, 
-		toCity as destination
+		toCity as destination, 
+		name
 insert into tableJoinResultStream;
 
 from tableJoinResultStream[to == destination]
 select from, to, -1 as currentTravelTimeByBus, -1 as predictedTravelTimeByBus, travelTimeByBus as historicTravelTimeByBus,
-		travelTimeByBike, travelTimeOnFoot
-insert into travelTimeResponseStream;
+		travelTimeByBike, travelTimeOnFoot, name
+insert into preTravelTimeResponseStream;
 
 from tableJoinResultStream[to != destination]
 insert into joinWithTimeTableStream;
 
 from joinWithTimeTableStream join travelTimeTable 
-on travelTimeTable.from == joinWithTimeTableStream.to
+on travelTimeTable.fromStop == joinWithTimeTableStream.to
 select joinWithTimeTableStream.from,
-		travelTimeTable.to, 
+		travelTimeTable.toStop as to, 
 		(joinWithTimeTableStream.travelTimeByBus + travelTimeTable.travelTimeByBus) as travelTimeByBus, 
 		(joinWithTimeTableStream.travelTimeByBike + travelTimeTable.travelTimeByBike) as travelTimeByBike, 
 		(joinWithTimeTableStream.travelTimeOnFoot + travelTimeTable.travelTimeOnFoot) as travelTimeOnFoot, 
-	   	destination
+	   	destination, 
+		name
 insert into tableJoinResultStream;
+
+from preTravelTimeResponseStream join stopTable
+on preTravelTimeResponseStream.from == stopTable.id
+select stopTable.name as from, to, currentTravelTimeByBus, 
+	predictedTravelTimeByBus, historicTravelTimeByBus, travelTimeByBike, travelTimeOnFoot, 
+	preTravelTimeResponseStream.name
+insert into intermediateTravelTimeResponseStream;
+
+from intermediateTravelTimeResponseStream join stopTable
+on intermediateTravelTimeResponseStream.to == stopTable.id
+select from, stopTable.name as to, currentTravelTimeByBus, 
+	predictedTravelTimeByBus, historicTravelTimeByBus, travelTimeByBike, travelTimeOnFoot, 
+	intermediateTravelTimeResponseStream.name
+insert into travelTimeResponseStream;

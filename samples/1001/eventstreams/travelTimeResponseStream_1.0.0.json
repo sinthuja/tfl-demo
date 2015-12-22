@@ -31,6 +31,10 @@
     {
       "name": "travelTimeOnFoot",
       "type": "INT"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
     }
   ]
 }
