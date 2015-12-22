@@ -48,7 +48,7 @@ insert into lateDecisionStream;
 
 from lateDecisionStream[isArrived!=true AND (timeStamp- lastArrivedTimestamp) > 60000]#window.length(1) join  stopTable
 on stopTable.id == lateDecisionStream.stopId
-select timeStamp, stopTable.id, stopTable.latitude, stopTable.longitude, stopTable.name, "DELAYED" as status, stopTable.line, str:concat("Bus DELAYED, No Busses Arrived For Last ", math:round((timeStamp - lastArrivedTimestamp) / 60000F), " minute(s)") as information
+select timeStamp, stopTable.id, stopTable.latitude, stopTable.longitude, stopTable.name, "DELAYED" as status, stopTable.line, str:concat("Bus delayed, no buses arrived for last ", math:round((timeStamp - lastArrivedTimestamp) / 60000F), " minute(s)") as information
 insert into lateAlertStream;
 
 from every e1=lateAlertStream -> e2=busArrivalDepartureStream[e2.stopId == e1.id]
@@ -56,7 +56,7 @@ select e2.timeStamp- e1.timeStamp as delay, e1.id, e1.latitude, e1.longitude, e1
 insert into delayStream;
 
 from delayStream 
-select timeStamp, id, latitude, longitude, name, "ON TIME" as status, line, "Bus ON TIME" as information
+select timeStamp, id, latitude, longitude, name, "ON TIME" as status, line, "Buses are running on time" as information
 insert into lateAlertStream;
 
 from lateAlertStream
