@@ -32,6 +32,7 @@ var ApplicationOptions = {
         CEP_WEB_SOCKET_OUTPUT_ADAPTOR_NAME: 'DefaultWebsocketOutputAdaptor',
         CEP_ON_ALERT_WEB_SOCKET_OUTPUT_ADAPTOR_NAME: 'DefaultWebsocketOutputAdaptorOnAlert',
         CEP_Traffic_STREAM_WEB_SOCKET_OUTPUT_ADAPTOR_NAME: 'DefaultWebsocketOutputAdaptorOnTrafficStream',
+        CEP_TFL_Traffic_STREAM_WEB_SOCKET_OUTPUT_ADAPTOR_NAME: 'TFLTrafficStreamPublisher',
         CEP_WEB_SOCKET_OUTPUT_ADAPTOR_WEBAPP_NAME: 'outputwebsocket',
         TENANT_INDEX: 't',
         COLON : ':',

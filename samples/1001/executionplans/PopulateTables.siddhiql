@@ -6,7 +6,7 @@
 
 /* define streams/tables and write queries here ... */
 @Import('rawTravelTimeStream:1.0.0')
-define stream rawTravelTimeStream (from string, to string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+define stream rawTravelTimeStream (from string, to string, travelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
 
 @Import('rawStopPointStream:1.0.0')
 define stream rawStopPointStream (name string, id string, naptan string, sequence int, line string, direction int,
@@ -23,7 +23,7 @@ define table stopTable (name string, id string, naptan string, sequence int, lin
 define table busTimeTable (id string, name string, direction int, t_day string, t_hour int, t_minute int, minutesInDay int);
 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='TravelTimeTable')
-define table travelTimeTable (fromStop string, toStop string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+define table travelTimeTable (fromStop string, toStop string, travelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
 
 from rawStopPointStream
 insert into stopTable;

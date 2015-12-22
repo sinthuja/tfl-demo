@@ -1,0 +1,44 @@
+{
+  "name": "timeBetweenStopsStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "stopId",
+      "type": "STRING"
+    },
+    {
+      "name": "prevStopId",
+      "type": "STRING"
+    },
+    {
+      "name": "stopIdLatitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "stopIdLongitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "prevStopIdLatitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "prevStopIdLongitude",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
+    },
+    {
+      "name": "t_hour",
+      "type": "INT"
+    },
+    {
+      "name": "timeTaken",
+      "type": "LONG"
+    }
+  ]
+}

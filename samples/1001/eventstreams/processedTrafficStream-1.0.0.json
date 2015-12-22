@@ -1,0 +1,36 @@
+{
+  "name": "processedTrafficStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "STRING"
+    },
+    {
+      "name": "state",
+      "type": "STRING"
+    },
+    {
+      "name": "information",
+      "type": "STRING"
+    },
+    {
+      "name": "fromLng",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "fromLat",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "toLng",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "toLat",
+      "type": "DOUBLE"
+    }
+  ]
+}

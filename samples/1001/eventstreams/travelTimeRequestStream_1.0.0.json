@@ -5,11 +5,11 @@
   "description": "",
   "payloadData": [
     {
-      "name": "fromCity",
+      "name": "fromStop",
       "type": "STRING"
     },
     {
-      "name": "toCity",
+      "name": "toStop",
       "type": "STRING"
     },
     {

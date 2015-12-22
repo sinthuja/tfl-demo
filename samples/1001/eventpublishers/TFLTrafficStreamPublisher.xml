@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="TFLTrafficStreamPublisher"
+                statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+    <from streamName="processedTrafficStream" version="1.0.0"/>
+    <mapping customMapping="enable" type="json">
+        <inline>
+            {
+                "messageType" : "TFLTraffic",
+                "type": "Feature",
+                "id": {{id}},
+                "properties": {
+                    "state": {{state}},
+                    "information": {{information}}
+                },
+                "coordinates": {
+                    "from": [{{fromLng}},{{fromLat}}],
+                    "to": [{{toLng}},{{toLat}}]
+                }
+            }
+        </inline>
+    </mapping>
+    <to eventAdapterType="websocket-local"/>
+</eventPublisher>
