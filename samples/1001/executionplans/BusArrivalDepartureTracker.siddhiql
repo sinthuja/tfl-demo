@@ -23,7 +23,15 @@ from stopTableTrigger join stopTable
 select str:concat("s-", direction, "-", id) as id, latitude, longitude, 0l as timeStamp
 insert into preProximityStream;
 
-from rawBusStream 
+from rawBusStream[heading > -65 AND heading <= 115]
+select id, name, 2 as direction, timeStamp, latitude, longitude, type, speed, heading
+insert into #fixedDiretionStream;
+
+from rawBusStream[heading <= -65 OR heading > 115]
+select id, name, 1 as direction, timeStamp, latitude, longitude, type, speed, heading
+insert into #fixedDiretionStream;
+
+from #fixedDiretionStream
 select str:concat("b-",direction,"-",id) as id, latitude, longitude, tfl:toGMT(timeStamp) as timeStamp
 insert into preProximityStream;
 
