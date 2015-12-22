@@ -12,10 +12,11 @@
 define stream travelTimeRequestStream (fromStop string, toStop string, time long, name string);
 
 @Export('historicTravelTimeResponseStream:1.0.0')
-define stream historicTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, historicTravelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+define stream historicTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, 
+												historicTravelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='TravelTimeTable')
-define table travelTimeTable (fromStop string, toStop string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+define table travelTimeTable (fromStop string, toStop string, travelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
 define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,

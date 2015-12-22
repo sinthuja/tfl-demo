@@ -14,15 +14,15 @@
     },
     {
       "name": "travelTimeByBus",
-      "type": "INT"
+      "type": "LONG"
     },
     {
       "name": "travelTimeByBike",
-      "type": "INT"
+      "type": "LONG"
     },
     {
       "name": "travelTimeOnFoot",
-      "type": "INT"
+      "type": "LONG"
     }
   ]
 }
