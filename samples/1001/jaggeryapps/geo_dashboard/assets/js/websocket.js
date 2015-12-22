@@ -850,7 +850,7 @@ function initializeOnTFLTrafficStreamWebSocket() {
 }
 
 initializeOnTFLTrafficStreamWebSocket();
-initializeOnTrafficStreamWebSocket();
+// initializeOnTrafficStreamWebSocket();
 initializeOnAlertWebSocket();
 initializeWebSocket();
 
