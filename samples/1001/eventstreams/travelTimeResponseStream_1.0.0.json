@@ -1,0 +1,48 @@
+{
+  "name": "travelTimeResponseStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "fromStop",
+      "type": "STRING"
+    },
+    {
+      "name": "toStop",
+      "type": "STRING"
+    },
+    {
+      "name": "fromStopId",
+      "type": "STRING"
+    },
+    {
+      "name": "toStopId",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "predictedTravelTimeByBus",
+      "type": "LONG"
+    },
+    {
+      "name": "currentTravelTimeByBus",
+      "type": "LONG"
+    },
+    {
+      "name": "historicTravelTimeByBus",
+      "type": "LONG"
+    },
+    {
+      "name": "travelTimeByBike",
+      "type": "LONG"
+    },
+    {
+      "name": "travelTimeOnFoot",
+      "type": "LONG"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "twitterOutputStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "tweets",
+      "type": "STRING"
+    }
+  ]
+}
