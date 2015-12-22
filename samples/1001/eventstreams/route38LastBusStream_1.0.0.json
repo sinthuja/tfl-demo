@@ -14,7 +14,7 @@
     },
     {
       "name": "timeStamp",
-      "type": "LONG"
+      "type": "STRING"
     }
   ]
 }

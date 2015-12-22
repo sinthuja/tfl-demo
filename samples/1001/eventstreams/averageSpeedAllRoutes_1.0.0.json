@@ -1,0 +1,12 @@
+{
+  "name": "averageSpeedAllRoutes",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "averageSpeed",
+      "type": "DOUBLE"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+    "id": "demo-grid",
+    "title": "Demo Grid",
+    "description": "Grid with info boxes at top",
+    "thumbnail": "store://layout/demo-grid/index.png",
+    "url": "store://layout/demo-grid/index.hbs"
+}
+

@@ -1,0 +1,40 @@
+{
+  "name": "historicTravelTimeResponseStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "fromStop",
+      "type": "STRING"
+    },
+    {
+      "name": "toStop",
+      "type": "STRING"
+    },
+    {
+      "name": "fromStopId",
+      "type": "STRING"
+    },
+    {
+      "name": "toStopId",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "historicTravelTimeByBus",
+      "type": "INT"
+    },
+    {
+      "name": "travelTimeByBike",
+      "type": "INT"
+    },
+    {
+      "name": "travelTimeOnFoot",
+      "type": "INT"
+    }
+  ]
+}

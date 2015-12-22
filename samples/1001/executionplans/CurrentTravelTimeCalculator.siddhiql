@@ -1,0 +1,72 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('CurrentTravelTimeCalculator')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Plan:trace('false')
+
+@Import('historicTravelTimeResponseStream:1.0.0')
+define stream historicTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, historicTravelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+
+@Export('currentTravelTimeResponseStream:1.0.0')
+define stream currentTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, currentTravelTimeByBus int, historicTravelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='TravelTimeTable')
+define table historicTravelTimeTable (fromStop string, toStop string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+
+@IndexBy("fromStop")
+define table travelTimeTable (fromStop string, toStop string, travelTimeByBus int);
+
+define trigger travelTimeTableTrigger at 'start';
+
+from travelTimeTableTrigger join historicTravelTimeTable
+select fromStop, toStop, travelTimeByBus
+insert into travelTimeTable;
+
+from historicTravelTimeResponseStream as h join travelTimeTable as t
+on h.fromStopId == t.fromStop
+select h.fromStop, 
+		h.toStop, 
+		h.fromStopId, 
+		t.toStop as toStopId, 
+		h.name, 
+		0 as travelTimeByBus, 
+		historicTravelTimeByBus,
+		travelTimeByBike, 
+		travelTimeOnFoot,
+		h.fromStopId as origenId,
+		h.toStopId as destinationId
+insert into tableJoinResultStream;
+
+from tableJoinResultStream[toStopId == destinationId]
+select fromStop, 
+		toStop, 
+		origenId as fromStopId, 
+		destinationId as toStopId, 
+		name, 
+		travelTimeByBus as currentTravelTimeByBus, 
+		historicTravelTimeByBus,
+		travelTimeByBike, 
+		travelTimeOnFoot
+insert into currentTravelTimeResponseStream;
+
+from tableJoinResultStream[toStopId != destinationId]
+insert into joinWithTimeTableStream;
+
+from joinWithTimeTableStream join travelTimeTable 
+on travelTimeTable.fromStop == joinWithTimeTableStream.toStopId
+select joinWithTimeTableStream.fromStop, 
+		joinWithTimeTableStream.toStop, 
+		joinWithTimeTableStream.fromStopId, 
+		travelTimeTable.toStop as toStopId, 
+		joinWithTimeTableStream.name, 
+		(joinWithTimeTableStream.travelTimeByBus + travelTimeTable.travelTimeByBus) as travelTimeByBus, 
+		historicTravelTimeByBus,
+		travelTimeByBike, 
+		travelTimeOnFoot,
+		origenId,
+	   	destinationId
+insert into tableJoinResultStream;

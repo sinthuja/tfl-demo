@@ -12,7 +12,7 @@
 define stream twitterInputStream (twitterData string, screenName string);
 
 @Export('travelTimeRequestStream:1.0.0')
-define stream travelTimeRequestStream (fromCity string, toCity string, time long, name string);
+define stream travelTimeRequestStream (fromStop string, toStop string, time long, name string);
 
 /* todo: need to change replacement of "#" into a valid character. Also replace "-" with "@" */
 /*from twitterInputStream
@@ -43,9 +43,9 @@ select e1.match as city1, e1.isFromCity as isCity1From, e2.match as city2, e2.is
 insert into corelationStream;
 
 from corelationStream[isCity1From == true and isCity2From == false]
-select city1 as fromCity, city2 as toCity, time, name
+select city1 as fromStop, city2 as toStop, time, name
 insert into travelTimeRequestStream;
 
 from corelationStream[isCity1From == false and isCity2From == true]
-select city2 as fromCity, city1 as toCity, time, name
+select city2 as fromStop, city1 as toStop, time, name
 insert into travelTimeRequestStream;

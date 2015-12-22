@@ -13,10 +13,10 @@ define stream busArrivalDepartureStream (stopId string, busId string, timeStamp 
 define stream timeTriggerStream (invoke bool, timeStamp long);
 
 @Export('delaysCountStream:1.0.0')
-define stream delaysCountStream (line string, delays long);
+define stream delaysCountStream (line string, delays long, timeStamp long);
 
 @Export('currentDelaysStream:1.0.0')
-define stream currentDelaysStream (line string, delays long);
+define stream currentDelaysStream (delays long);
 
 @Export('fusedSpatialEvent:1.0.0')
 define stream fusedStream (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, 
@@ -64,13 +64,12 @@ select id, name, 1 as direction, latitude, longitude, timeStamp, 'STOP' as type,
 insert into fusedStream;
 
 from lateAlertStream[status == "DELAYED"]
-select line, count() as delays
+select line, count() as delays, timeStamp
 group by line
 insert into delaysCountStream;
 
-from delaysCountStream#window.timeBatch(15 seconds)
-select line, count() as delays
-group by line
+from lateAlertStream[status == "DELAYED"]
+select count() as delays
 insert into currentDelaysStream;
 
 from busArrivalDepartureStream
