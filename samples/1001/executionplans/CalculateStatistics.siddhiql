@@ -12,6 +12,15 @@ define stream inputStream (id string, name string, direction int, latitude doubl
 @Import('busArrivalDepartureStream:1.0.0')
 define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
 
+@Export('route29LastBusStream:1.0.0')
+define stream route29LastBusStream (stopId string, busId string, timeStamp long);
+
+@Export('route25LastBusStream:1.0.0')
+define stream route25LastBusStream (stopId string, busId string, timeStamp long);
+
+@Export('route38LastBusStream:1.0.0')
+define stream route38LastBusStream (stopId string, busId string, timeStamp long);
+
 @Export('busCountStream:1.0.0')
 define stream busCountStream (busses long, route string);
 
@@ -27,13 +36,26 @@ define table busTable (id string, line string);
 
 from busArrivalDepartureStream as b join stopTable as s
 on b.stopId == s.id
-select b.busId as id, s.line as line
+select b.busId, b.stopId, s.line, b.isArrived, b.timeStamp
 insert into #busInfoStream;
 
-from #busInfoStream
-insert into busTable;
+from #busInfoStream[line == "38" AND isArrived == true]
+select stopId, busId, timeStamp
+insert into route38LastBusStream;
+
+from #busInfoStream[line == "25" AND isArrived == true]
+select stopId, busId, timeStamp
+insert into route25LastBusStream;
+
+from #busInfoStream[line == "29" AND isArrived == true]
+select stopId, busId, timeStamp
+insert into route29LastBusStream;
 
 from #busInfoStream
+select busId as id, line
+insert into busTable;
+
+from #busInfoStream#window.firstUnique(busId)
 select count() as busses, line as route
 group by line
 insert into busCountStream;
