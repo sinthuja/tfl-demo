@@ -304,9 +304,12 @@ function processTrafficMessage(json) {
 function processTFLTrafficMessage(json) {
     if (json.id in currentTFLTraffic) {
         currentTFLTraffic[json.id].removeFromMap();
-        // delete currentTFLTraffic[json.id];
+        delete currentTFLTraffic[json.id];
     }
-    currentTFLTraffic[json.id] = new TFLTrafficObject(json);
+    var tflTraffic = new TFLTrafficObject(json);
+    if (tflTraffic) {
+        currentTFLTraffic[json.id] = tflTraffic;
+    }
 }
 
 function processAlertMessage(json) {
@@ -538,6 +541,9 @@ function TFLTrafficObject(json) {
             this.lineStyle["color"] = "yellow";
             break;
         case "Minimal":
+            this.lineStyle["color"] = "green";
+            break;
+        default:
             return null;
     }
 

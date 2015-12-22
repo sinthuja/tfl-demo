@@ -63,13 +63,15 @@ from lateAlertStream
 select id, name, 1 as direction, latitude, longitude, timeStamp, 'STOP' as type, 0f as speed, 0f as heading, status as state, information, false as notify
 insert into fusedStream;
 
-from lateAlertStream[status == "DELAYED"]
+from lateAlertStream[status == "DELAYED"]#window.externalTime(timeStamp, 5 sec)
 select line, count() as delays, timeStamp
 group by line
+output last every  1 seconds
 insert into delaysCountStream;
 
-from lateAlertStream[status == "DELAYED"]
+from lateAlertStream[status == "DELAYED"]#window.externalTime(timeStamp, 5 sec)
 select count() as delays
+output last every 1 seconds
 insert into currentDelaysStream;
 
 from busArrivalDepartureStream
