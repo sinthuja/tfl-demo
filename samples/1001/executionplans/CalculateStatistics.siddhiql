@@ -12,14 +12,17 @@ define stream inputStream (id string, name string, direction int, latitude doubl
 @Import('busArrivalDepartureStream:1.0.0')
 define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
 
+@Export('averageSpeedAllRoutes:1.0.0')
+define stream averageSpeedAllRoutes (averageSpeed double);
+
 @Export('route29LastBusStream:1.0.0')
-define stream route29LastBusStream (stopId string, busId string, timeStamp long);
+define stream route29LastBusStream (stopId string, busId string, timeStamp string);
 
 @Export('route25LastBusStream:1.0.0')
-define stream route25LastBusStream (stopId string, busId string, timeStamp long);
+define stream route25LastBusStream (stopId string, busId string, timeStamp string);
 
 @Export('route38LastBusStream:1.0.0')
-define stream route38LastBusStream (stopId string, busId string, timeStamp long);
+define stream route38LastBusStream (stopId string, busId string, timeStamp string);
 
 @Export('busCountStream:1.0.0')
 define stream busCountStream (busses long, route string);
@@ -30,25 +33,27 @@ define stream outputStream (averageSpeed double, route string, timeStamp long);
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
 define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
 						latitude double, longitude double);
+						
+
 
 @IndexBy('id')
 define table busTable (id string, line string);
 
 from busArrivalDepartureStream as b join stopTable as s
 on b.stopId == s.id
-select b.busId, b.stopId, s.line, b.isArrived, b.timeStamp
+select b.busId, b.stopId, s.line, b.isArrived, b.timeStamp, s.name
 insert into #busInfoStream;
 
 from #busInfoStream[line == "38" AND isArrived == true]
-select stopId, busId, timeStamp
+select s.name as stopId, busId, time:dateFormat(timeStamp,"HH:mm") as timeStamp
 insert into route38LastBusStream;
 
 from #busInfoStream[line == "25" AND isArrived == true]
-select stopId, busId, timeStamp
+select s.name as stopId, busId,  time:dateFormat(timeStamp,"HH:mm") as timeStamp
 insert into route25LastBusStream;
 
-from #busInfoStream[line == "29" AND isArrived == true]
-select stopId, busId, timeStamp
+from #busInfoStream[line == "29" AND isArrived == true] 
+select s.name as stopId, busId,  time:dateFormat(timeStamp,"HH:mm") as timeStamp
 insert into route29LastBusStream;
 
 from #busInfoStream
@@ -70,3 +75,8 @@ select math:round(avg(speed)* 100)/100.0 as averageSpeed, line as route, timeSta
 group by line
 output last every 1 sec
 insert into outputStream;
+
+from #preSpeedStream[speed >= 0]#window.externalTime(timeStamp, 60 sec)
+select math:round(avg(speed)* 100)/100.0 as averageSpeed
+output last every 1 sec
+insert into averageSpeedAllRoutes;

@@ -11,6 +11,10 @@
     {
       "name": "delays",
       "type": "LONG"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
     }
   ]
 }
