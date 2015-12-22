@@ -38,7 +38,7 @@ public class Bus {
     public Bus(String id, String name, int direction) {
         this.id = id;
         this.name = name;
-        this.direction = direction;
+        this.direction = direction; // could change over time
         timeStamp = System.currentTimeMillis();
         predictions = new PriorityQueue<Prediction>();
         predictionsMap = new HashMap<BusStop, Prediction>();
@@ -60,6 +60,7 @@ public class Bus {
         if (p != null) {
             this.latitude = p.busStop.latitude;
             this.longitude = p.busStop.longitude;
+            this.direction = p.busStop.direction;
             lastStop = p.busStop;
         }
     }
@@ -102,6 +103,7 @@ public class Bus {
         latitude = newLatitude;
         longitude = newLongitude;
         timeStamp = System.currentTimeMillis();
+        direction = p.busStop.direction;
         return this.toString();
     }
 
