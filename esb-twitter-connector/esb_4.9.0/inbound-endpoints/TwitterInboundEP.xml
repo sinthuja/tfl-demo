@@ -10,7 +10,7 @@
       <parameter name="twitter.operation">filter</parameter>
       <parameter name="connection.twitter.accessSecret">sSs9m38ux5NvL6p2IIhIXNXRoEqQF9CdCFIvUbgYU7rvZ</parameter>
       <parameter name="interval">10</parameter>
-      <parameter name="twitter.track">#wso2_cep</parameter>
+      <parameter name="twitter.track">#london_traffic_wso2_cep</parameter>
       <parameter name="connection.twitter.consumerKey">YKEIUp8zfcDQFOHLldDSGR5CF</parameter>
       <parameter name="coordination">true</parameter>
       <parameter name="connection.twitter.accessToken">4488630255-0OrNqq82w3Hny2lryIwZhftV85YpTyqtqcc6a7y</parameter>

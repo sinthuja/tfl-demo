@@ -1,5 +1,5 @@
 {
-  "name": "travelTimeStream",
+  "name": "rawTravelTimeStream",
   "version": "1.0.0",
   "nickName": "",
   "description": "",
@@ -23,10 +23,6 @@
     {
       "name": "travelTimeOnFoot",
       "type": "INT"
-    },
-    {
-      "name": "hour",
-      "type": "STRING"
     }
   ]
 }

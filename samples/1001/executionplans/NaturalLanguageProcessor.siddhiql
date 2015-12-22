@@ -16,7 +16,7 @@ define stream travelTimeRequestStream (fromCity string, toCity string, time long
 
 /* todo: need to change replacement of "#" into a valid character. Also replace "-" with "@" */
 /*from twitterInputStream
-select str:replaceAll(str:concat(twitterData,'-',screenName),'#','1') as tweets
+select str:replaceAll(str:concat(twitterData,' @',screenName),'#london_traffic_wso2_cep','') as tweets
 insert into twitterOutputStream;*/
 
 from twitterInputStream
