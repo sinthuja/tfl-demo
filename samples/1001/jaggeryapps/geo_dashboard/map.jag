@@ -123,6 +123,11 @@ var log = new Log();
                 .constance.TENANT_INDEX+ApplicationOptions.constance.PATH_SEPARATOR + '<%= user.domain %>' +
                 ApplicationOptions.constance.PATH_SEPARATOR+ApplicationOptions.constance
                 .CEP_Traffic_STREAM_WEB_SOCKET_OUTPUT_ADAPTOR_NAME+ApplicationOptions.constance.PATH_SEPARATOR;
+            var tflTrafficStreamWebSocketURL = 'ws://'+'<%= serverHost %>'+':'+'<%= serverPort %>'+ApplicationOptions.constance.PATH_SEPARATOR+ApplicationOptions.constance
+                .CEP_WEB_SOCKET_OUTPUT_ADAPTOR_WEBAPP_NAME+ApplicationOptions.constance.PATH_SEPARATOR+ApplicationOptions
+                .constance.TENANT_INDEX+ApplicationOptions.constance.PATH_SEPARATOR + '<%= user.domain %>' +
+                ApplicationOptions.constance.PATH_SEPARATOR+ApplicationOptions.constance
+                .CEP_TFL_Traffic_STREAM_WEB_SOCKET_OUTPUT_ADAPTOR_NAME+ApplicationOptions.constance.PATH_SEPARATOR;
 
 
 
