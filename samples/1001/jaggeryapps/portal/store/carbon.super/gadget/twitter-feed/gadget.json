@@ -1,0 +1,9 @@
+{
+    "id": "twitter-feed",
+    "title": "Twitter Feed",
+    "type": "gadget",
+    "thumbnail": "store://gadget/twitter-feed/twitter-icon.png",
+    "data": {
+        "url": "store://gadget/twitter-feed/index.xml"
+    }
+}
