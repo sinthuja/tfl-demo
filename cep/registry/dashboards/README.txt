@@ -1,0 +1,1 @@
+Place “demo” file in /_system/config/ues/dashboards/ registry directory
