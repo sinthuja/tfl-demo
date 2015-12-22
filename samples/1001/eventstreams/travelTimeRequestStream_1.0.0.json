@@ -1,0 +1,24 @@
+{
+  "name": "travelTimeRequestStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "fromCity",
+      "type": "STRING"
+    },
+    {
+      "name": "toCity",
+      "type": "STRING"
+    },
+    {
+      "name": "time",
+      "type": "LONG"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    }
+  ]
+}

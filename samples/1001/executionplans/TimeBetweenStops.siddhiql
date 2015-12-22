@@ -9,9 +9,19 @@
 @Import('busArrivalDepartureStream:1.0.0')
 define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
 
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
+						latitude double, longitude double);
+						
 --@From(eventtable='rdbms', datasource.name='WSO2_ML_DB', table.name='TimeBetweenStopsTable')
 define table timeBetweenStopsTable (stopId string, prevStopId string, timeStamp long, t_hour int, timeTaken long);
 
-from every e1 = busArrivalDepartureStream[isArrived == true] -> e2 = busArrivalDepartureStream[isArrived == true AND e1.busId == busId AND e1.stopId != stopId]
+from busArrivalDepartureStream as a join stopTable as s
+on a.stopId == s.id
+select a.stopId, a.busId, a.timeStamp, a.isArrived, s.sequence
+insert into enrichedBusArrivalDepartureStream;
+
+from every e1 = enrichedBusArrivalDepartureStream[isArrived == true] -> e2 = enrichedBusArrivalDepartureStream[isArrived == true AND e1.busId == busId AND e1.stopId != stopId]
 select e2.stopId, e1.stopId as prevStopId, e1.timeStamp, time:extract(e1.timeStamp, 'HOUR') as t_hour, (e2.timeStamp - e1.timeStamp) as timeTaken
+having e1.sequence + 1 == e2.sequence
 insert into timeBetweenStopsTable;

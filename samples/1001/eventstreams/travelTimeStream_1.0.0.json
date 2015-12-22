@@ -1,0 +1,32 @@
+{
+  "name": "travelTimeStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "from",
+      "type": "STRING"
+    },
+    {
+      "name": "to",
+      "type": "STRING"
+    },
+    {
+      "name": "travelTimeByBus",
+      "type": "INT"
+    },
+    {
+      "name": "travelTimeByBike",
+      "type": "INT"
+    },
+    {
+      "name": "travelTimeOnFoot",
+      "type": "INT"
+    },
+    {
+      "name": "hour",
+      "type": "STRING"
+    }
+  ]
+}

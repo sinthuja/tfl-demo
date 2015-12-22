@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2015 WSO2 Inc. (http://wso2.com)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<dictionary>
+    <entity id="PERSON">
+        <entry>Obama</entry>
+        <entry>Kent Brantly</entry>
+		<entry>Bill Gates</entry>
+		<entry>Paul Allen</entry>
+    </entity>
+    <entity id="LOCATION">
+	<entry>St John Street / Goswell Road</entry>
+		<entry>St Martin's Place</entry>
+		<entry>Clerkenwell Road</entry>
+		<entry>Great Russell Street</entry>
+		<entry>Lordship Lane</entry>
+		<entry>Atherton Leisure Centre</entry>
+		<entry>Coborn Road</entry>
+		<entry>Stepney Green Station</entry>
+		<entry>Sidney Street</entry>
+		<entry>Bow Church Station</entry>
+		<entry>Gower Street / University College Hosp</entry>
+		<entry>Whitechapel Station  / Royal London Hosp</entry>
+		<entry>Margery Park Road</entry>
+		<entry>Holborn Circus / Fetter Lane</entry>
+		<entry>Bloomsbury Way</entry>
+		<entry>Silverdale</entry>
+		<entry>Procter Street</entry>
+		<entry>West Green Road</entry>
+		<entry>Old Bond Street / Royal Academy</entry>
+		<entry>Camden Town Station</entry>
+		<entry>Hilldrop Road</entry>
+		<entry>Glenarm Road</entry>
+		<entry>Essex Road / Newington Green Road</entry>
+		<entry>Water Lane / University Of East London</entry>
+		<entry>Clapton Square</entry>
+		<entry>The East London Mosque</entry>
+		<entry>Finsbury Park Station</entry>
+		<entry>Bank Station  / Cornhill</entry>
+		<entry>Green Park Station</entry>
+		<entry>Dalston Junction</entry>
+		<entry>St Ann's Road</entry>
+		<entry>Essex Road Station</entry>
+		<entry>Hampstead Road / Drummond Street</entry>
+		<entry>Sandall Road</entry>
+		<entry>High Street North</entry>
+		<entry>Hackney Central Station</entry>
+		<entry>Rowley Gardens</entry>
+		<entry>Gerrard Place / Chinatown</entry>
+		<entry>Holloway / Nags Head</entry>
+		<entry>Poultry / Bank Station</entry>
+		<entry>Wardour Street</entry>
+		<entry>Royal London Hospital / Whitechapel Stn</entry>
+		<entry>Mattison Road</entry>
+		<entry>Woodgrange Park Station</entry>
+		<entry>Stratford Centre</entry>
+		<entry>Cross Street</entry>
+		<entry>St Mary Axe</entry>
+		<entry>Booth Memorial</entry>
+		<entry>Little Ilford Lane</entry>
+		<entry>Denmark Street</entry>
+		<entry>Turnpike Lane Station</entry>
+		<entry>North Circular Road</entry>
+		<entry>New Oxford Street / High Holborn</entry>
+		<entry>Regents Canal</entry>
+		<entry>Warton Road</entry>
+		<entry>Oxford Street / Soho Street</entry>
+		<entry>Portland Rise</entry>
+		<entry>Old Park Lane / Hard Rock Cafe</entry>
+		<entry>Tysoe Street</entry>
+		<entry>Warren Street Station</entry>
+		<entry>Goodge Street Station</entry>
+		<entry>Trocadero / Haymarket</entry>
+		<entry>Museum Street</entry>
+		<entry>Old Town Hall</entry>
+		<entry>Bloomsbury Square</entry>
+		<entry>Holborn Circus</entry>
+		<entry>Essex Road / Marquess Road</entry>
+		<entry>Endymion Road</entry>
+		<entry>Holborn Station</entry>
+		<entry>Bow Road Station</entry>
+		<entry>Seven Sisters Road / Nags Head</entry>
+		<entry>Abbey Lane</entry>
+		<entry>King Edward Street</entry>
+		<entry>Bow Church</entry>
+		<entry>St Pancras Way</entry>
+		<entry>Dersingham Avenue</entry>
+		<entry>Bank Station  / Poultry</entry>
+		<entry>Piccadilly Circus</entry>
+		<entry>Brecknock Road</entry>
+		<entry>Mount Pleasant</entry>
+		<entry>Mile End Station</entry>
+		<entry>Litchfield Avenue</entry>
+		<entry>Rabbits Road</entry>
+		<entry>Red Lion Street</entry>
+		<entry>H M Prison Holloway</entry>
+		<entry>Hillmarton Road / H M Prison Holloway</entry>
+		<entry>Finsbury Park / Blackstock Road</entry>
+		<entry>Ockendon Road</entry>
+		<entry>Warren Street Station  / Euston Road</entry>
+		<entry>Sprowston Road</entry>
+		<entry>Camden Park Road</entry>
+		<entry>Harringay Green Lanes Station</entry>
+		<entry>Isledon Road</entry>
+		<entry>Seventh Avenue</entry>
+		<entry>Torriano Avenue</entry>
+		<entry>Murray Street</entry>
+		<entry>Stratford Bus Station</entry>
+		<entry>Green Park / Constitution Hill</entry>
+		<entry>Leicester Square Station</entry>
+		<entry>Adler Street</entry>
+		<entry>Graham Road / Hackney Central</entry>
+		<entry>Aldgate East Station</entry>
+		<entry>Manor House Station</entry>
+		<entry>First Avenue</entry>
+		<entry>Hardwick Street</entry>
+		<entry>Northchurch Road</entry>
+		<entry>Bread Street</entry>
+		<entry>Holles Street</entry>
+		<entry>Dean Street / Chinatown</entry>
+		<entry>Clapton Pond</entry>
+		<entry>Wilton Street</entry>
+		<entry>St Paul's Station</entry>
+		<entry>Bressenden Place</entry>
+		<entry>Green Street</entry>
+		<entry>Great Titchfield St / Oxford Circus Stn</entry>
+		<entry>Camden Road Station</entry>
+		<entry>Queen Mary / University Of London</entry>
+		<entry>Hackney Baths</entry>
+		<entry>Balls Pond Road / Burder Road</entry>
+		<entry>Torrington Place</entry>
+		<entry>Holloway Road</entry>
+		<entry>Islington Green</entry>
+		<entry>Clapton Girls' Academy</entry>
+		<entry>Cambridge Circus</entry>
+		<entry>Camden Town / Camden Road</entry>
+		<entry>Robert Street</entry>
+		<entry>Hornsey Road</entry>
+		<entry>Chancery Lane Station</entry>
+		<entry>Whitechapel Station</entry>
+		<entry>Bishopsgate</entry>
+		<entry>Angel Station</entry>
+		<entry>Beresford Road</entry>
+		<entry>Hyde Park Corner</entry>
+		<entry>Wood Green Station</entry>
+		<entry>Tottenham Court Road Station</entry>
+		<entry>Greenwood Road</entry>
+		<entry>Manor House Station  / Woodberry Grove</entry>
+		<entry>Hainault Street</entry>
+		<entry>Brownlow Street</entry>
+		<entry>Victoria Bus Station</entry>
+		<entry>Royal Oak Road</entry>
+		<entry>Stratford High St / Carpenters Road</entry>
+		<entry>Brampton Park Road</entry>
+		<entry>Stannard Road</entry>
+		<entry>City Thameslink Station</entry>
+		<entry>New Oxford Street</entry>
+		<entry>Pembury Circus</entry>
+		<entry>Alexandra Grove</entry>
+		<entry>Kingsland High Street</entry>
+		<entry>Camden High Street</entry>
+		<entry>Ocean Estate</entry>
+		<entry>Finsbury Town Hall</entry>
+		<entry>Katherine Road</entry>
+		<entry>Stepney Green</entry>
+		<entry>Shrewsbury Road</entry>
+		<entry>Southgate Road</entry>
+		<entry>Ilford Hill</entry>
+		<entry>Ilford Broadway</entry>
+		<entry>Coleraine Road</entry>
+		<entry>Lea Bridge Roundabout</entry>
+		<entry>Packington Street</entry>
+		<entry>Trafalgar Square / Charing Cross Stn</entry>
+		<entry>Woodgrange Road</entry>
+		<entry>Mildmay Park / Southgate Road</entry>
+		<entry>Chapel Road</entry>
+		<entry>Gray's Inn Road</entry>
+		<entry>Chambers Road</entry>
+		<entry>Wood Green Shopping City</entry>
+		<entry>Dalston Lane / Dalston Junction Station</entry>
+		<entry>Fonthill Road</entry>
+		<entry>Percy Street</entry>
+		<entry>Hackney Central/ Mare Street</entry>
+		<entry>Aldgate Station</entry>
+		<entry>Stratford High St Stn  / Carpenters Road</entry>
+		<entry>Pratt Street</entry>
+		<entry>Falkland Road</entry>
+		<entry>Millfields Road</entry>
+		<entry>Berriman Road</entry>
+		<entry>Caledonian Road</entry>
+		<entry>Mare Street / Narrow Way</entry>
+		<entry>St Katharine Cree</entry>
+		<entry>Grosvenor Gardens</entry>
+		<entry>Sadler's Wells Theatre</entry>
+		<entry>Bancroft Road / Ocean Estate</entry>
+		<entry>Mornington Crescent Station</entry>
+		<entry>Durham Road</entry>
+		<entry>Culford Road</entry>
+		<entry>Chenies Street</entry>
+		<entry>Redbridge Central Library</entry>
+		<entry>Sobell Centre</entry>
+		<entry>Amhurst Road / Hackney Downs Station</entry>
+		<entry>Rosebery Avenue</entry>
+    </entity>
+    <entity id="DATE">
+        <entry>yesterday</entry>
+        <entry>Tuesday</entry>
+        <entry>Today</entry>
+        <entry>September</entry>
+        <entry>Friday</entry>
+    </entity>
+    <entity id="MONEY">
+        <entry>million</entry>
+        <entry>LKR</entry>
+        <entry>USD</entry>
+    </entity>
+</dictionary>
