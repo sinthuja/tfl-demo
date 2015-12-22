@@ -1,0 +1,87 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('PredictionTravelTimeCalculator')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Plan:trace('true')
+
+@Import('currentTravelTimeResponseStream:1.0.0')
+define stream currentTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, currentTravelTimeByBus long, historicTravelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
+
+@Export('travelTimeResponseStream:1.0.0')
+define stream travelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, predictedTravelTimeByBus long, currentTravelTimeByBus long, historicTravelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
+						latitude double, longitude double);
+						
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='TravelTimeTable')
+define table travelTimeTable (fromStop string, toStop string, travelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
+
+from currentTravelTimeResponseStream as c join stopTable
+on c.fromStopId == stopTable.id
+select stopTable.direction,
+	stopTable.line, 
+	stopTable.sequence, 
+	10 as t_hour, 
+	c.fromStopId as currentFromStop, 
+	fromStop, 
+	toStop, 
+	fromStopId, 
+	toStopId, 
+	c.name, 0l as predictedTravelTimeByBus, currentTravelTimeByBus, historicTravelTimeByBus, travelTimeByBike, travelTimeOnFoot
+insert into preTravelTimeResponseStream; 
+
+from preTravelTimeResponseStream
+select direction, line, sequence, t_hour
+insert into prePredictionStream;
+
+from prePredictionStream --#ml:predict('registry:2.Model.2015-12-22_19-47-59', 'double')
+select direction, line, sequence, t_hour, 0l as timetaken --convert(timetaken, 'long') as timetaken
+insert into predictionStream;
+
+from preTravelTimeResponseStream#window.time(5 sec) as e1 join predictionStream#window.time(5 sec) as e2
+on e1.direction==e2.direction AND e1.line==e2.line AND e1.sequence==e2.sequence AND e1.t_hour==e2.t_hour
+select e1.currentFromStop, e1.fromStop, e1.toStop, e1.fromStopId, e1.toStopId, 
+	e1.name, e1.predictedTravelTimeByBus + e2.timetaken as predictedTravelTimeByBus, e1.currentTravelTimeByBus, e1.historicTravelTimeByBus, e1.travelTimeByBike, e1.travelTimeOnFoot
+insert into postPredictionStream;
+
+from postPredictionStream join travelTimeTable
+on postPredictionStream.currentFromStop == travelTimeTable.fromStop
+select travelTimeTable.toStop as currentFromStop,
+		postPredictionStream.fromStop, 
+		postPredictionStream.toStop, 
+		postPredictionStream.fromStopId, 
+		postPredictionStream.toStopId, 
+		postPredictionStream.name, 
+		predictedTravelTimeByBus,
+		currentTravelTimeByBus,
+		historicTravelTimeByBus,
+		postPredictionStream.travelTimeByBike, 
+		postPredictionStream.travelTimeOnFoot, 
+		postPredictionStream.fromStopId as origenId,
+		postPredictionStream.toStopId as destinationId
+insert into tableJoinResultStream;
+	
+from tableJoinResultStream[currentFromStop == destinationId]
+select fromStop, 
+		toStop, 
+		origenId as fromStopId, 
+		destinationId as toStopId, 
+		name, 
+		predictedTravelTimeByBus,
+		currentTravelTimeByBus,
+		historicTravelTimeByBus,
+		travelTimeByBike, 
+		travelTimeOnFoot
+insert into travelTimeResponseStream;
+
+from tableJoinResultStream[currentFromStop != destinationId]#window.length(1) as s join stopTable
+on s.currentFromStop == stopTable.id
+select stopTable.direction, stopTable.line, stopTable.sequence, 10 as t_hour, currentFromStop, s.fromStop, s.toStop, s.fromStopId, s.toStopId, 
+	s.name, predictedTravelTimeByBus, currentTravelTimeByBus, historicTravelTimeByBus, s.travelTimeByBike, s.travelTimeOnFoot
+insert into preTravelTimeResponseStream;
+
