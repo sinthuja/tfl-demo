@@ -8,22 +8,29 @@
 
 @Plan:trace('false')
 
+@Import('timeBetweenStopsStream:1.0.0')
+define stream timeBetweenStopsStream (stopId string, prevStopId string, stopIdLatitude double, stopIdLongitude double, prevStopIdLatitude double, prevStopIdLongitude double, timeStamp long, t_hour int, timeTaken long);
+
 @Import('historicTravelTimeResponseStream:1.0.0')
-define stream historicTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, historicTravelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+define stream historicTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, historicTravelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
 
 @Export('currentTravelTimeResponseStream:1.0.0')
-define stream currentTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, currentTravelTimeByBus int, historicTravelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+define stream currentTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, currentTravelTimeByBus long, historicTravelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
 
 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='TravelTimeTable')
-define table historicTravelTimeTable (fromStop string, toStop string, travelTimeByBus int, travelTimeByBike int, travelTimeOnFoot int);
+define table historicTravelTimeTable (fromStop string, toStop string, travelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
 
 @IndexBy("fromStop")
-define table travelTimeTable (fromStop string, toStop string, travelTimeByBus int);
+define table travelTimeTable (fromStop string, toStop string, travelTimeByBus long);
 
 define trigger travelTimeTableTrigger at 'start';
 
 from travelTimeTableTrigger join historicTravelTimeTable
 select fromStop, toStop, travelTimeByBus
+insert into travelTimeTable;
+
+from timeBetweenStopsStream
+select prevStopId as fromStop, stopId as toStop, timeTaken*1l as travelTimeByBus
 insert into travelTimeTable;
 
 from historicTravelTimeResponseStream as h join travelTimeTable as t
@@ -33,7 +40,7 @@ select h.fromStop,
 		h.fromStopId, 
 		t.toStop as toStopId, 
 		h.name, 
-		0 as travelTimeByBus, 
+		0l as travelTimeByBus, 
 		historicTravelTimeByBus,
 		travelTimeByBike, 
 		travelTimeOnFoot,

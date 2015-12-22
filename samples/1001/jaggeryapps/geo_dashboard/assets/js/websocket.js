@@ -19,10 +19,12 @@
 var debugObject; // assign object and debug from browser console, this is for debugging purpose , unless this var is unused
 var showPathFlag = false; // Flag to hold the status of draw objects path
 var currentSpatialObjects = {};
+var currentTFLTraffic = {};
 var selectedSpatialObject; // This is set when user search for an object from the search box
 var websocket;
 var onAlertWebsocket;
 var onTrafficStreamWebsocket;
+var onTFLTrafficStreamWebsocket;
 var currentPredictions = {};
 // Make the function wait until the connection is made...
 var waitTime = 1000;
@@ -287,7 +289,7 @@ SpatialObject.prototype.stateIcon = function () {
 };
 
 function processTrafficMessage(json) {
-    if (json.id in currentSpatialObjects) {
+    if (json.id in currentTFLTraffic) {
         var existingObject = currentSpatialObjects[json.id];
         existingObject.update(json);
         console.log("existing area");
@@ -297,6 +299,14 @@ function processTrafficMessage(json) {
         currentSpatialObjects[json.id] = receivedObject;
         currentSpatialObjects[json.id].addTo(map);
     }
+}
+
+function processTFLTrafficMessage(json) {
+    if (json.id in currentTFLTraffic) {
+        currentTFLTraffic[json.id].removeFromMap();
+        // delete currentTFLTraffic[json.id];
+    }
+    currentTFLTraffic[json.id] = new TFLTrafficObject(json);
 }
 
 function processAlertMessage(json) {
@@ -506,7 +516,41 @@ GeoAreaObject.prototype.update = function (geoJSON) {
     this.popupTemplate.find('#information').html(this.information);
 
     this.marker.setPopupContent(this.popupTemplate.html())
+};
+
+function TFLTrafficObject(json) {
+    this.id = json.id;
+    this.type = "line";
+    this.state = json.properties.state;
+
+    this.lineStyle = {
+        color: 'green',
+        weight: 8,
+        opacity: 0.5,
+        smoothFactor: 1
+    };
+
+    switch (this.state) {
+        case "Moderate":
+            this.lineStyle["color"] = "red";
+            break;
+        case "Severe":
+            this.lineStyle["color"] = "yellow";
+            break;
+        case "Minimal":
+            return null;
+    }
+
+    this.latlngs = [];
+    this.latlngs.push([json.coordinates.from[1], json.coordinates.from[0]]);
+    this.latlngs.push([json.coordinates.to[1], json.coordinates.to[0]]);
+    this.polyline = L.polyline(this.latlngs, this.lineStyle).addTo(map);
+    return this;
 }
+
+TFLTrafficObject.prototype.removeFromMap = function () {
+    map.removeLayer(this.polyline);
+};
 
 function notifyAlert(message) {
     $.UIkit.notify({
@@ -613,6 +657,49 @@ var webSocketOnTrafficStreamError = function (e) {
     if (!onTrafficStreamWebsocket.get_opened()) return;
     $.UIkit.notify({
         message: 'Something went wrong when trying to connect to <b>' + trafficStreamWebSocketURL + '<b/>',
+        status: 'danger',
+        timeout: ApplicationOptions.constance.NOTIFY_DANGER_TIMEOUT,
+        pos: 'top-center'
+    });
+};
+
+var webSocketOnTFLTrafficStreamOpen = function () {
+    onTFLTrafficStreamWebsocket.set_opened();
+    $.UIkit.notify({
+        message: 'You Are Connected to TFL Traffic Stream !!',
+        status: 'success',
+        timeout: ApplicationOptions.constance.NOTIFY_SUCCESS_TIMEOUT,
+        pos: 'top-center'
+    });
+
+};
+
+var webSocketOnTFLTrafficStreamMessage = function processMessage(message) {
+    console.log("webSocketOnTFLTrafficStreamMessage")
+    var json = $.parseJSON(message.data);
+    if (json.messageType == "TFLTraffic") {
+        processTFLTrafficMessage(json);
+    } else {
+        console.log("Message type not supported.");
+    }
+};
+
+var webSocketOnTFLTrafficStreamClose = function (e) {
+    if (onTFLTrafficStreamWebsocket.get_opened()) {
+        $.UIkit.notify({
+            message: 'Connection lost with TFL Traffic Stream Stream !!',
+            status: 'danger',
+            timeout: ApplicationOptions.constance.NOTIFY_DANGER_TIMEOUT,
+            pos: 'top-center'
+        });
+    }
+    waitForSocketConnection(onTFLTrafficStreamWebsocket, initializeOnTFLTrafficStreamWebSocket);
+};
+
+var webSocketOnTFLTrafficStreamError = function (e) {
+    if (!onTFLTrafficStreamWebsocket.get_opened()) return;
+    $.UIkit.notify({
+        message: 'Something went wrong when trying to connect to <b>' + tflTrafficStreamWebSocketURL + '<b/>',
         status: 'danger',
         timeout: ApplicationOptions.constance.NOTIFY_DANGER_TIMEOUT,
         pos: 'top-center'
@@ -730,7 +817,6 @@ function waitForSocketConnection(socket, callback) {
         }, waitTime); // wait 5 milisecond for the connection...
 }
 
-
 function initializeWebSocket() {
     websocket = new WebSocket(webSocketURL);
     websocket.onopen = webSocketOnOpen;
@@ -754,7 +840,17 @@ function initializeOnTrafficStreamWebSocket() {
     onTrafficStreamWebsocket.onerror = webSocketOnTrafficStreamError;
     onTrafficStreamWebsocket.onopen = webSocketOnTrafficStreamOpen;
 }
-initializeOnTrafficStreamWebSocket();
+
+function initializeOnTFLTrafficStreamWebSocket() {
+    onTFLTrafficStreamWebsocket = new WebSocket(tflTrafficStreamWebSocketURL);
+    onTFLTrafficStreamWebsocket.onmessage = webSocketOnTFLTrafficStreamMessage;
+    onTFLTrafficStreamWebsocket.onclose = webSocketOnTFLTrafficStreamClose;
+    onTFLTrafficStreamWebsocket.onerror = webSocketOnTFLTrafficStreamError;
+    onTFLTrafficStreamWebsocket.onopen = webSocketOnTFLTrafficStreamOpen;
+}
+
+initializeOnTFLTrafficStreamWebSocket();
+// initializeOnTrafficStreamWebSocket();
 initializeOnAlertWebSocket();
 initializeWebSocket();
 

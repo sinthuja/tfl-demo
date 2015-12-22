@@ -26,19 +26,19 @@
     },
     {
       "name": "currentTravelTimeByBus",
-      "type": "INT"
+      "type": "LONG"
     },
     {
       "name": "historicTravelTimeByBus",
-      "type": "INT"
+      "type": "LONG"
     },
     {
       "name": "travelTimeByBike",
-      "type": "INT"
+      "type": "LONG"
     },
     {
       "name": "travelTimeOnFoot",
-      "type": "INT"
+      "type": "LONG"
     }
   ]
 }
