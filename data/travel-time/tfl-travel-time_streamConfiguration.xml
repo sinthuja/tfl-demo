@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<streamConfiguration type="csv">
+    <file>tfl-travel-time.csv</file>
+    <streamID>rawTravelTimeStream:1.0.0</streamID>
+    <separateChar>,</separateChar>
+    <delayBetweenEventsInMilies>5</delayBetweenEventsInMilies>
+</streamConfiguration>
