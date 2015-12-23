@@ -12,19 +12,36 @@ define stream timeTakenStream (stopId string, prevStopId string, stopIdLatitude 
 @Export('processedTrafficStream:1.0.0')
 define stream trafficStream (id string, state string, information string, fromLng double, fromLat double, toLng double, toLat double);
 
-from timeTakenStream[timeTaken > 325000]
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int, latitude double, longitude double);
+
+from timeTakenStream as tts join stopTable as st
+on st.id == tts.prevStopId
+select tts.stopId, tts.prevStopId, tts.stopIdLatitude, tts.stopIdLongitude, tts.prevStopIdLatitude, tts.prevStopIdLongitude, tts.timeTaken, st.sequence as prevSequence
+insert into #innerStreamPrev;
+
+from #innerStreamPrev as isp join stopTable as st
+on st.id == isp.stopId
+select isp.stopId, isp.prevStopId, isp.stopIdLatitude, isp.stopIdLongitude, isp.prevStopIdLatitude, isp.prevStopIdLongitude, isp.timeTaken, isp.prevSequence, st.sequence as thisSequence
+insert into #innerStreamThis;
+
+from #innerStreamThis[math:abs(thisSequence - prevSequence) == 1]
+select stopId, prevStopId, stopIdLatitude, stopIdLongitude, prevStopIdLatitude, prevStopIdLongitude, timeTaken
+insert into #candidateTrafficStream;
+
+from #candidateTrafficStream[timeTaken > 310000]
 select prevStopId as id, "Severe" as state, "Severe Traffic" as information, prevStopIdLongitude as fromLng, prevStopIdLatitude as fromLat, stopIdLongitude as toLng, stopIdLatitude as toLat
 insert into #intermTrafficStream;
 
-from timeTakenStream[timeTaken <= 325000 AND timeTaken > 225000]
+from #candidateTrafficStream[timeTaken <= 310000 AND timeTaken > 160000]
 select prevStopId as id, "Moderate" as state, "Moderate Traffic" as information, prevStopIdLongitude as fromLng, prevStopIdLatitude as fromLat, stopIdLongitude as toLng, stopIdLatitude as toLat
 insert into #intermTrafficStream;
 
-from timeTakenStream[timeTaken <= 225000 AND timeTaken > 15000]
+from #candidateTrafficStream[timeTaken <= 160000 AND timeTaken > 30000]
 select prevStopId as id, "Normal" as state, "Normal Traffic" as information, prevStopIdLongitude as fromLng, prevStopIdLatitude as fromLat, stopIdLongitude as toLng, stopIdLatitude as toLat
 insert into #intermTrafficStream;
 
-from timeTakenStream[timeTaken <= 15000]
+from #candidateTrafficStream[timeTaken <= 30000]
 select prevStopId as id, "Minimal" as state, "Minimal Traffic" as information, prevStopIdLongitude as fromLng, prevStopIdLatitude as fromLat, stopIdLongitude as toLng, stopIdLatitude as toLat
 insert into #intermTrafficStream;
 
