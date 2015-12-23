@@ -67,14 +67,15 @@ function initializeMap() {
         map.remove();
     }
     map = L.map("map", {
-        zoom: 14,
-        center: [51.5159356, -0.1298357],
+        zoom: 15,
+        center: [51.519996, -0.1129374],
         layers: [defaultOSM, defaultTFL],
         zoomControl: false,
         attributionControl: true,
         maxZoom: 20,
         maxNativeZoom: 18
     });
+    new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
 
     map.on('click', function (e) {
         $.UIkit.offcanvas.hide();//[force = false] no animation
