@@ -12,19 +12,19 @@ define stream timeTakenStream (stopId string, prevStopId string, stopIdLatitude 
 @Export('processedTrafficStream:1.0.0')
 define stream trafficStream (id string, state string, information string, fromLng double, fromLat double, toLng double, toLat double);
 
-from timeTakenStream[timeTaken > 350000]
+from timeTakenStream[timeTaken > 325000]
 select prevStopId as id, "Severe" as state, "Severe Traffic" as information, prevStopIdLongitude as fromLng, prevStopIdLatitude as fromLat, stopIdLongitude as toLng, stopIdLatitude as toLat
 insert into #intermTrafficStream;
 
-from timeTakenStream[timeTaken <= 350000 AND timeTaken > 250000]
+from timeTakenStream[timeTaken <= 325000 AND timeTaken > 225000]
 select prevStopId as id, "Moderate" as state, "Moderate Traffic" as information, prevStopIdLongitude as fromLng, prevStopIdLatitude as fromLat, stopIdLongitude as toLng, stopIdLatitude as toLat
 insert into #intermTrafficStream;
 
-from timeTakenStream[timeTaken <= 250000 AND timeTaken > 10000]
+from timeTakenStream[timeTaken <= 225000 AND timeTaken > 15000]
 select prevStopId as id, "Normal" as state, "Normal Traffic" as information, prevStopIdLongitude as fromLng, prevStopIdLatitude as fromLat, stopIdLongitude as toLng, stopIdLatitude as toLat
 insert into #intermTrafficStream;
 
-from timeTakenStream[timeTaken <= 10000]
+from timeTakenStream[timeTaken <= 15000]
 select prevStopId as id, "Minimal" as state, "Minimal Traffic" as information, prevStopIdLongitude as fromLng, prevStopIdLatitude as fromLat, stopIdLongitude as toLng, stopIdLatitude as toLat
 insert into #intermTrafficStream;
 

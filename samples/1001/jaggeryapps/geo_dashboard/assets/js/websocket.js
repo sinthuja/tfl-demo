@@ -303,11 +303,14 @@ function processTrafficMessage(json) {
 
 function processTFLTrafficMessage(json) {
     if (json.id in currentTFLTraffic) {
-        currentTFLTraffic[json.id].removeFromMap();
+        var currentTraffic = currentTFLTraffic[json.id];
+        if (currentTraffic !== null && typeof currentTraffic !== "undefined") {
+            currentTraffic.removeFromMap();
+        }
         delete currentTFLTraffic[json.id];
     }
     var tflTraffic = new TFLTrafficObject(json);
-    if (tflTraffic) {
+    if (tflTraffic != null) {
         currentTFLTraffic[json.id] = tflTraffic;
     }
 }
@@ -555,7 +558,9 @@ function TFLTrafficObject(json) {
 }
 
 TFLTrafficObject.prototype.removeFromMap = function () {
-    map.removeLayer(this.polyline);
+    if (this.polyline != null && typeof this.polyline !== "undefined") {
+        map.removeLayer(this.polyline);
+    }
 };
 
 function notifyAlert(message) {
