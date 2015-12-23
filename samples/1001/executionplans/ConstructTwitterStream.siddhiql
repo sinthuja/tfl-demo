@@ -13,5 +13,5 @@ define stream travelTimeResponseStream (fromStop string, toStop string, fromStop
 define stream twitterOutputStream (tweets string);
 
 from travelTimeResponseStream
-select str:concat(fromStop,'-',toStop,' by bus currently ',currentTravelTimeByBus,'min. Usually ',predictedTravelTimeByBus,'min. Historically ',historicTravelTimeByBus,'min. For cycling ',travelTimeByBike,'min and walking ',travelTimeOnFoot,'min',' #LondonTrafficDemo @',name) as tweets
+select str:concat('@',name,' can go by bus in ',currentTravelTimeByBus,'min. In an hour ',predictedTravelTimeByBus,'min. Usually ',historicTravelTimeByBus,'min. Cycling takes ',travelTimeByBike,'min and walking ',travelTimeOnFoot,'min #LondonTrafficDemo') as tweets
 insert into twitterOutputStream;
