@@ -7,7 +7,8 @@
 /* define streams/tables and write queries here ... */
 
 @Import('rawBusStream:1.0.0')
-define stream dataIn (id string, name string, direction int, timeStamp long, latitude double, longitude double, type string, speed float, heading float);
+define stream dataIn (id string, name string, direction int, timeStamp long, latitude double,
+					  longitude double, type string, speed float, heading float);
 
 @Export('timeTriggerStream:1.0.0')
 define stream dataOut (invoke bool, timeStamp long);

@@ -42,41 +42,44 @@ define table busTable (id string, line string);
 from busArrivalDepartureStream as b join stopTable as s
 on b.stopId == s.id
 select b.busId, b.stopId, s.line, b.isArrived, b.timeStamp, s.name
-insert into #busInfoStream;
+insert into busInfoStream;
 
-from #busInfoStream[line == "38" AND isArrived == true]
+from busInfoStream[line == "38" AND isArrived == true]
 select s.name as stopId, busId, time:dateFormat(timeStamp,"HH:mm") as timeStamp
 insert into route38LastBusStream;
 
-from #busInfoStream[line == "25" AND isArrived == true]
+from busInfoStream[line == "25" AND isArrived == true]
 select s.name as stopId, busId,  time:dateFormat(timeStamp,"HH:mm") as timeStamp
 insert into route25LastBusStream;
 
-from #busInfoStream[line == "29" AND isArrived == true] 
+from busInfoStream[line == "29" AND isArrived == true] 
 select s.name as stopId, busId,  time:dateFormat(timeStamp,"HH:mm") as timeStamp
 insert into route29LastBusStream;
 
-from #busInfoStream
+from busInfoStream
 select busId as id, line
 insert into busTable;
 
-from #busInfoStream#window.firstUnique(busId)
+from busInfoStream#window.firstUnique(busId)
 select count() as busses, line as route
 group by line
 insert into busCountStream;
 
+@Info(name='BusLineEnrichmentQuery')
 from inputStream as i join busTable as b
 on i.id == b.id
 select i.speed, i.timeStamp, b.line
-insert into #preSpeedStream;
+insert into preSpeedStream;
 
-from #preSpeedStream[speed >= 0]#window.externalTime(timeStamp, 60 sec)
+@Info(name='PerLineAvgSpeedCalculator')
+from preSpeedStream[speed >= 0]#window.externalTime(timeStamp, 60 sec)
 select math:round(avg(speed)* 100)/100.0 as averageSpeed, line as route, timeStamp
 group by line
 output last every 1 sec
 insert into outputStream;
 
-from #preSpeedStream[speed >= 0]#window.externalTime(timeStamp, 60 sec)
+@Info(name='AvgSpeedCalculator')
+from preSpeedStream[speed >= 0]#window.externalTime(timeStamp, 60 sec)
 select math:round(avg(speed)* 100)/100.0 as averageSpeed
 output last every 1 sec
 insert into averageSpeedAllRoutes;

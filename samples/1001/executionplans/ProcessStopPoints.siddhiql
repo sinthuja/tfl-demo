@@ -51,8 +51,9 @@ on stopTable.id == lateDecisionStream.stopId
 select timeStamp, stopTable.id, stopTable.latitude, stopTable.longitude, stopTable.name, "DELAYED" as status, stopTable.line, str:concat("Bus delayed, no buses arrived for last ", math:round((timeStamp - lastArrivedTimestamp) / 60000F), " minute(s)") as information
 insert into lateAlertStream;
 
+@Info(name='DelayCalculator')
 from every e1=lateAlertStream -> e2=busArrivalDepartureStream[e2.stopId == e1.id]
-select e2.timeStamp- e1.timeStamp as delay, e1.id, e1.latitude, e1.longitude, e1.name, e2.timeStamp, e1.line
+select e2.timeStamp - e1.timeStamp as delay, e1.id, e1.latitude, e1.longitude, e1.name, e2.timeStamp, e1.line
 insert into delayStream;
 
 from delayStream 
@@ -66,7 +67,7 @@ insert into fusedStream;
 from lateAlertStream[status == "DELAYED"]#window.externalTime(timeStamp, 5 sec)
 select line, count() as delays, timeStamp
 group by line
-output last every  1 seconds
+output last every 1 seconds
 insert into delaysCountStream;
 
 from lateAlertStream[status == "DELAYED"]#window.externalTime(timeStamp, 5 sec)

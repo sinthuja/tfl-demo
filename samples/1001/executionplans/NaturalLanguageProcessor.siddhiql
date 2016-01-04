@@ -14,16 +14,11 @@ define stream twitterInputStream (twitterData string, screenName string);
 @Export('travelTimeRequestStream:1.0.0')
 define stream travelTimeRequestStream (fromStop string, toStop string, time long, name string);
 
-/* todo: need to change replacement of "#" into a valid character. Also replace "-" with "@" */
-/*from twitterInputStream
-select str:replaceAll(str:concat(twitterData,' @',screenName),'#london_traffic_wso2_cep','') as tweets
-insert into twitterOutputStream;*/
-
 from twitterInputStream
 select twitterData, screenName, UUID() as id
 insert into standredTwitterInputStream;
 
-@info(name = 'query1') 
+@info(name= 'NameEntityIdentificationQuery', description = 'NLP query to identify NameEntities') 
 from standredTwitterInputStream#nlp:findNameEntityTypeViaDictionary('LOCATION', 'samples/artifacts/1001/dictionary.xml', twitterData, true)
 select match, twitterData, screenName, id
 insert into locationStream;

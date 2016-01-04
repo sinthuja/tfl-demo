@@ -6,7 +6,7 @@
 
 /* define streams/tables and write queries here ... */
 
-@Plan:trace('true')
+@Plan:trace('false')
 
 @Import('travelTimeRequestStream:1.0.0')
 define stream travelTimeRequestStream (fromStop string, toStop string, time long, name string);
