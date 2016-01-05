@@ -16,13 +16,13 @@ define stream busArrivalDepartureStream (stopId string, busId string, timeStamp 
 define stream averageSpeedAllRoutes (averageSpeed double);
 
 @Export('route29LastBusStream:1.0.0')
-define stream route29LastBusStream (stopId string, busId string, timeStamp string);
+define stream route29LastBusStream (stopName string, busId string, lastArrivalTime string);
 
 @Export('route25LastBusStream:1.0.0')
-define stream route25LastBusStream (stopId string, busId string, timeStamp string);
+define stream route25LastBusStream (stopName string, busId string, lastArrivalTime string);
 
 @Export('route38LastBusStream:1.0.0')
-define stream route38LastBusStream (stopId string, busId string, timeStamp string);
+define stream route38LastBusStream (stopName string, busId string, lastArrivalTime string);
 
 @Export('busCountStream:1.0.0')
 define stream busCountStream (busses long, route string);
@@ -45,15 +45,15 @@ select b.busId, b.stopId, s.line, b.isArrived, b.timeStamp, s.name
 insert into busInfoStream;
 
 from busInfoStream[line == "38" AND isArrived == true]
-select s.name as stopId, busId, time:dateFormat(timeStamp,"HH:mm") as timeStamp
+select s.name as stopName, busId, time:dateFormat(timeStamp,"HH:mm") as lastArrivalTime
 insert into route38LastBusStream;
 
 from busInfoStream[line == "25" AND isArrived == true]
-select s.name as stopId, busId,  time:dateFormat(timeStamp,"HH:mm") as timeStamp
+select s.name as stopName, busId,  time:dateFormat(timeStamp,"HH:mm") as lastArrivalTime
 insert into route25LastBusStream;
 
 from busInfoStream[line == "29" AND isArrived == true] 
-select s.name as stopId, busId,  time:dateFormat(timeStamp,"HH:mm") as timeStamp
+select s.name as stopName, busId,  time:dateFormat(timeStamp,"HH:mm") as lastArrivalTime
 insert into route29LastBusStream;
 
 from busInfoStream
