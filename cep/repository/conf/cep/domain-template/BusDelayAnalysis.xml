@@ -24,7 +24,7 @@
                                 @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
                                 define table stopTable (name string, id string, naptan string, sequence int, line string, direction int, latitude double, longitude double);
                  
-                                from lateDecisionStream[isArrived!=true AND (timeStamp- lastArrivedTimestamp) > 60000]#window.length(1) join  stopTable
+                                from lateDecisionStream[isArrived!=true AND (timeStamp- lastArrivedTimestamp) > ($delayMinutes*60000)]#window.length(1) join  stopTable
                                 on stopTable.id == lateDecisionStream.stopId
                                 select stopTable.name, math:round((timeStamp - lastArrivedTimestamp) / 60000F) as delayInMinutes, "$emailAddresses" as subscribers  
                                 having name == "$busStopName"
@@ -41,6 +41,11 @@
           <displayName>Email addresses list</displayName>
           <description>Comma separated list of email addresses</description>
           <defaultValue></defaultValue>
+        </parameter>
+      <parameter name="delayMinutes" type="string">
+          <displayName>Delay in minutes</displayName>
+          <description>Delay in minutes</description>
+          <defaultValue>5</defaultValue>
         </parameter>
       </parameters>
     </template>
