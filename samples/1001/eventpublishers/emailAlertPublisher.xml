@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="emailAlertPublisher" statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="lateEmailAlertStream" version="1.0.0"/>
+  <mapping customMapping="enable" type="text">
+    <inline>No buses arrived for last {{delayInMinutes}} minute(s)</inline>
+  </mapping>
+  <to eventAdapterType="email">
+    <property name="email.address">{{subscribers}}</property>
+    <property name="email.type">text/plain</property>
+    <property name="email.subject">Bus delay tracker-  bus stop {{name}}</property>
+  </to>
+</eventPublisher>
