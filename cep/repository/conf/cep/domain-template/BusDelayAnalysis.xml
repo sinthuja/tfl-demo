@@ -35,7 +35,7 @@
         <parameter name="busStopName" type="string">
           <displayName>Bus stop name</displayName>
           <description>Bus stop to be tracked</description>
-          <defaultValue>75</defaultValue>
+          <defaultValue>New Oxford Street</defaultValue>
         </parameter>
         <parameter name="emailAddresses" type="string">
           <displayName>Email addresses list</displayName>
