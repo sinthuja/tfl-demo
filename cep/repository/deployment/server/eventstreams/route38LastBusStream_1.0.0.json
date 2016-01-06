@@ -1,0 +1,20 @@
+{
+  "name": "route38LastBusStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "stopName",
+      "type": "STRING"
+    },
+    {
+      "name": "busId",
+      "type": "STRING"
+    },
+    {
+      "name": "lastArrivalTime",
+      "type": "STRING"
+    }
+  ]
+}

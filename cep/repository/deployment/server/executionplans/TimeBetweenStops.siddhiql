@@ -1,0 +1,40 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('TimeBetweenStops')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('busArrivalDepartureStream:1.0.0')
+define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
+
+@Export('timeBetweenStopsStream:1.0.0')
+define stream timeBetweenStopsStream (stopId string, prevStopId string, stopIdLatitude double, stopIdLongitude double, 
+									  prevStopIdLatitude double, prevStopIdLongitude double, timeStamp long, t_hour int, timeTaken long);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
+						latitude double, longitude double);
+						
+--@From(eventtable='rdbms', datasource.name='WSO2_ML_DB', table.name='TimeBetweenStopsTable')
+define table timeBetweenStopsTable (stopId string, prevStopId string, timeStamp long, t_hour int, timeTaken long);
+
+from busArrivalDepartureStream as a join stopTable as s
+on a.stopId == s.id
+select a.stopId, a.busId, a.timeStamp, a.isArrived, s.sequence, s.latitude, s.longitude
+insert into enrichedBusArrivalDepartureStream;
+
+@Info(name='TimeBetweenStopsQuery', description='Calculating travel time between adjacent stops')
+from every e1 = enrichedBusArrivalDepartureStream[isArrived == true] -> 
+		e2 = enrichedBusArrivalDepartureStream[isArrived == true AND e1.busId == busId AND e1.stopId != stopId]
+select e2.stopId, e1.stopId as prevStopId, 
+		e2.latitude as stopIdLatitude, e2.longitude as stopIdLongitude, 
+		e1.latitude as prevStopIdLatitude, e1.longitude as prevStopIdLongitude, 
+		e1.timeStamp, time:extract(e1.timeStamp, 'HOUR') as t_hour, (e2.timeStamp - e1.timeStamp) as timeTaken
+having e1.sequence + 1 == e2.sequence
+insert into timeBetweenStopsStream;
+
+from timeBetweenStopsStream
+select stopId, prevStopId, timeStamp, t_hour, timeTaken
+insert into timeBetweenStopsTable

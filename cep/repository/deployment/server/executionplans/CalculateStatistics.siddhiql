@@ -1,0 +1,85 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('CalculateStatistics')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('standardSpatialEvents:1.0.0')
+define stream inputStream (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string);
+
+@Import('busArrivalDepartureStream:1.0.0')
+define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
+
+@Export('averageSpeedAllRoutes:1.0.0')
+define stream averageSpeedAllRoutes (averageSpeed double);
+
+@Export('route29LastBusStream:1.0.0')
+define stream route29LastBusStream (stopName string, busId string, lastArrivalTime string);
+
+@Export('route25LastBusStream:1.0.0')
+define stream route25LastBusStream (stopName string, busId string, lastArrivalTime string);
+
+@Export('route38LastBusStream:1.0.0')
+define stream route38LastBusStream (stopName string, busId string, lastArrivalTime string);
+
+@Export('busCountStream:1.0.0')
+define stream busCountStream (busses long, route string);
+
+@Export('averageSpeedStream:1.0.0')
+define stream outputStream (averageSpeed double, route string, timeStamp long);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
+						latitude double, longitude double);
+						
+
+
+@IndexBy('id')
+define table busTable (id string, line string);
+
+from busArrivalDepartureStream as b join stopTable as s
+on b.stopId == s.id
+select b.busId, b.stopId, s.line, b.isArrived, b.timeStamp, s.name
+insert into busInfoStream;
+
+from busInfoStream[line == "38" AND isArrived == true]
+select s.name as stopName, busId, time:dateFormat(timeStamp,"HH:mm") as lastArrivalTime
+insert into route38LastBusStream;
+
+from busInfoStream[line == "25" AND isArrived == true]
+select s.name as stopName, busId,  time:dateFormat(timeStamp,"HH:mm") as lastArrivalTime
+insert into route25LastBusStream;
+
+from busInfoStream[line == "29" AND isArrived == true] 
+select s.name as stopName, busId,  time:dateFormat(timeStamp,"HH:mm") as lastArrivalTime
+insert into route29LastBusStream;
+
+from busInfoStream
+select busId as id, line
+insert into busTable;
+
+from busInfoStream#window.firstUnique(busId)
+select count() as busses, line as route
+group by line
+insert into busCountStream;
+
+@Info(name='BusLineEnrichmentQuery')
+from inputStream as i join busTable as b
+on i.id == b.id
+select i.speed, i.timeStamp, b.line
+insert into preSpeedStream;
+
+@Info(name='PerLineAvgSpeedCalculator')
+from preSpeedStream[speed >= 0]#window.externalTime(timeStamp, 60 sec)
+select math:round(avg(speed)* 100)/100.0 as averageSpeed, line as route, timeStamp
+group by line
+output last every 1 sec
+insert into outputStream;
+
+@Info(name='AvgSpeedCalculator')
+from preSpeedStream[speed >= 0]#window.externalTime(timeStamp, 60 sec)
+select math:round(avg(speed)* 100)/100.0 as averageSpeed
+output last every 1 sec
+insert into averageSpeedAllRoutes;
