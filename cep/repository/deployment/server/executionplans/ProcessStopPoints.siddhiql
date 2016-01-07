@@ -12,6 +12,9 @@ define stream busArrivalDepartureStream (stopId string, busId string, timeStamp 
 @Import('timeTriggerStream:1.0.0')
 define stream timeTriggerStream (invoke bool, timeStamp long);
 
+@Export('lateDecisionStream:1.0.0')
+define stream lateDecisionStream (stopId string, busId string, timeStamp long, lastArrivedTimestamp long, isArrived bool);
+
 @Export('delaysCountStream:1.0.0')
 define stream delaysCountStream (line string, delays long, timeStamp long);
 
