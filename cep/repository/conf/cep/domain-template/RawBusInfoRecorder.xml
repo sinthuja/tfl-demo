@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templateDomain name="RawBusInfoRecorder">
+  <description>Recoding raw bus details in a database</description>
+  <templates>
+    <template name="Bus Information Recorder">
+      <description>To store raw bus details in a database</description>
+      <executionPlan><![CDATA[
+                                /* Enter a unique ExecutionPlan */
+                                @Plan:name('rawBusInfoStorePlan')
+                 
+                                /* Enter a unique description for ExecutionPlan */
+                                -- @Plan:description('ExecutionPlan')
+                 
+                                /* define streams and write query here ... */
+                                @Import('rawBusStream:1.0.0')
+                                define stream rawBusStream (id string, name string, direction int, timeStamp long, latitude double, longitude double, type string, speed float, heading float);
+
+                 
+                                @Export('rawBusInfotoDBStream:1.0.0')
+                                define stream rawBusInfotoDBStream (id string, name string, direction int, timeStamp long, latitude double, longitude double, type string, speed float, heading float);
+                              
+                                from rawBusStream[$storeData] 
+                                select * 
+                                insert into rawBusInfotoDBStream;
+
+                                 ]]></executionPlan>
+      <parameters>
+        <parameter name="storeData" type="bool">
+          <displayName>Store data in db</displayName>
+          <description>If set to true raw bus details will be saved in the database</description>
+          <defaultValue>true</defaultValue>
+          <options>true,false</options>
+        </parameter>
+      </parameters>
+    </template>
+  </templates>
+  <streams>
+    <stream>                          
+                        {
+                          "streamId": "rawBusStream:1.0.0",
+                          "name": "rawBusStream",
+                          "version": "1.0.0",
+                          "nickName": "",
+                          "description": "",
+                          "metaData": [],
+                          "correlationData": [],
+                          "payloadData": [
+                            {
+                              "name": "id",
+                              "type": "STRING"
+                            },
+                            {
+                              "name": "name",
+                              "type": "STRING"
+                            },
+                            {
+                              "name": "direction",
+                              "type": "INT"
+                            },
+                            {
+                              "name": "timeStamp",
+                              "type": "LONG"
+                            },
+                            {
+                              "name": "latitude",
+                              "type": "DOUBLE"
+                            },
+                            {
+                              "name": "longitude",
+                              "type": "DOUBLE"
+                            },
+                            {
+                              "name": "type",
+                              "type": "STRING"
+                            },
+                            {
+                              "name": "speed",
+                              "type": "FLOAT"
+                            },
+                            {
+                              "name": "heading",
+                              "type": "FLOAT"
+                            }
+                          ]
+                        }                                       
+    </stream>
+    <stream>
+                        {
+                          "streamId": "rawBusInfotoDBStream:1.0.0",
+                          "name": "rawBusInfotoDBStream",
+                          "version": "1.0.0",
+                          "nickName": "",
+                          "description": "",
+                          "metaData": [],
+                          "correlationData": [],
+                          "payloadData": [
+                            {
+                              "name": "id",
+                              "type": "STRING"
+                            },
+                            {
+                              "name": "name",
+                              "type": "STRING"
+                            },
+                            {
+                              "name": "direction",
+                              "type": "INT"
+                            },
+                            {
+                              "name": "timeStamp",
+                              "type": "LONG"
+                            },
+                            {
+                              "name": "latitude",
+                              "type": "DOUBLE"
+                            },
+                            {
+                              "name": "longitude",
+                              "type": "DOUBLE"
+                            },
+                            {
+                              "name": "type",
+                              "type": "STRING"
+                            },
+                            {
+                              "name": "speed",
+                              "type": "FLOAT"
+                            },
+                            {
+                              "name": "heading",
+                              "type": "FLOAT"
+                            }
+                          ]
+                        }
+                        </stream>
+  </streams>
+</templateDomain>
