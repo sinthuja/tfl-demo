@@ -1,1 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><streamConfiguration name="rawBusInfoFromDB" type="database"><dataSource>WSO2_GEO_DB</dataSource><tableName>RAWBUSINFORMATION</tableName><streamID>rawBusStream:1.0.0</streamID><delayBetweenEventsInMilies>1000</delayBetweenEventsInMilies><columnMappings><columnMapping columnName="id" streamAttribute="id"/><columnMapping columnName="name" streamAttribute="name"/><columnMapping columnName="direction" streamAttribute="direction"/><columnMapping columnName="timeStamp" streamAttribute="timeStamp"/><columnMapping columnName="latitude" streamAttribute="latitude"/><columnMapping columnName="longitude" streamAttribute="longitude"/><columnMapping columnName="type" streamAttribute="type"/><columnMapping columnName="speed" streamAttribute="speed"/><columnMapping columnName="heading" streamAttribute="heading"/></columnMappings></streamConfiguration>
+<?xml version="1.0" encoding="UTF-8"?>
+<streamConfiguration name="rawBusInfoFromDB" type="database">
+    <dataSource>WSO2_GEO_DB</dataSource>
+    <tableName>RAWBUSINFORMATION</tableName>
+    <streamID>rawBusStream:1.0.0</streamID>
+    <delayBetweenEventsInMilies>5</delayBetweenEventsInMilies>
+    <columnMappings>
+        <columnMapping columnName="id" streamAttribute="id"/>
+        <columnMapping columnName="name" streamAttribute="name"/>
+        <columnMapping columnName="direction" streamAttribute="direction"/>
+        <columnMapping columnName="timeStamp" streamAttribute="timeStamp"/>
+        <columnMapping columnName="latitude" streamAttribute="latitude"/>
+        <columnMapping columnName="longitude" streamAttribute="longitude"/>
+        <columnMapping columnName="type" streamAttribute="type"/>
+        <columnMapping columnName="speed" streamAttribute="speed"/>
+        <columnMapping columnName="heading" streamAttribute="heading"/>
+    </columnMappings>
+</streamConfiguration>
