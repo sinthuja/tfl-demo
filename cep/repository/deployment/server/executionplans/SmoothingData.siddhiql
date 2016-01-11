@@ -1,0 +1,20 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('SmoothingData')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('busTrafficStream:1.0.0')
+define stream dataIn (id string, name string, direction int, timeStamp long, latitude double, longitude double, type string, speed float, heading float);
+
+@Export('rawBusStream:1.0.0')
+define stream dataOut (id string, name string, direction int, timeStamp long, latitude double, longitude double, type string, speed float, heading float);
+
+partition with (type of dataIn)
+begin 
+	from dataIn
+	select id, name, direction, timeStamp, kf:smooth(latitude) as latitude, kf:smooth(longitude) as longitude, type, speed, heading
+	insert into dataOut;
+end;

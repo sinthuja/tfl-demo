@@ -15,5 +15,5 @@ define stream dataIn (id string, name string, direction int, timeStamp long, lat
 define stream dataOut (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string ); 
 
 from dataIn
-select id, name, direction, latitude, longitude, tfl:toGMT(timeStamp) as timeStamp, type ,speed, heading, UUID() as eventId
+select id, name, direction, latitude, longitude, tfl:toGMT(timeStamp) as timeStamp, type, speed, heading, UUID() as eventId
 insert into dataOut

@@ -6,7 +6,7 @@
 
 /* define streams/tables and write queries here ... */
 
-@Plan:trace('false')
+@Plan:trace('true')
 
 @Import('twitterInputStream:1.0.0')
 define stream twitterInputStream (twitterData string, screenName string);
@@ -19,7 +19,8 @@ select twitterData, screenName, UUID() as id
 insert into standredTwitterInputStream;
 
 @info(name= 'NameEntityIdentificationQuery', description = 'NLP query to identify NameEntities') 
-from standredTwitterInputStream#nlp:findNameEntityTypeViaDictionary('LOCATION', 'repository/deployment/server/dictionary.xml', twitterData, true)
+from standredTwitterInputStream#nlp:findNameEntityTypeViaDictionary('LOCATION', 
+																	'repository/deployment/server/dictionary.xml', twitterData, true)
 select match, twitterData, screenName, id
 insert into locationStream;
 

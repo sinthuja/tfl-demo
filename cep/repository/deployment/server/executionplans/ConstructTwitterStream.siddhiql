@@ -6,20 +6,28 @@
 
 /* define streams/tables and write queries here ... */
 
+@Plan:statistics('true')
+
+@Plan:trace('true')
+
 @Import('travelTimeResponseStream:1.0.0')
 define stream travelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, predictedTravelTimeByBus long, currentTravelTimeByBus long, historicTravelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
 
 @Export('twitterOutputStream:1.0.0')
 define stream twitterOutputStream (tweets string);
 
-from travelTimeResponseStream[currentTravelTimeByBus > travelTimeByBike]
-select str:concat('@',name,' Now it takes ',currentTravelTimeByBus,'min by bus and in an hour it might take ',predictedTravelTimeByBus,'min. But a bike can take you in ',travelTimeByBike,'min #TFLDemo') as tweets
+from travelTimeResponseStream[name != 'mobile']
+select name, predictedTravelTimeByBus, currentTravelTimeByBus, travelTimeByBike, math:round(math:rand() * 100) as rqid
+insert into travelTimeStream;
+
+from travelTimeStream[currentTravelTimeByBus > travelTimeByBike]
+select str:concat('@',name,' Now it takes ',currentTravelTimeByBus,'min by bus and in an hour it might take ',predictedTravelTimeByBus,'min. But a bike can take you in ',travelTimeByBike,'min #TFLDemo', ' RQ', rqid) as tweets
 insert into twitterOutputStream;
 
-from travelTimeResponseStream[currentTravelTimeByBus <= travelTimeByBike and predictedTravelTimeByBus > currentTravelTimeByBus]
-select str:concat('@',name,' Now it takes ',currentTravelTimeByBus,'min by bus and in an hour it might take ',predictedTravelTimeByBus,'min #TFLDemo') as tweets
+from travelTimeStream[currentTravelTimeByBus <= travelTimeByBike and predictedTravelTimeByBus > currentTravelTimeByBus]
+select str:concat('@',name,' Now it takes ',currentTravelTimeByBus,'min by bus and in an hour it might take ',predictedTravelTimeByBus,'min #TFLDemo', ' RQ', rqid) as tweets
 insert into twitterOutputStream;
 
-from travelTimeResponseStream[currentTravelTimeByBus <= travelTimeByBike and predictedTravelTimeByBus <= currentTravelTimeByBus]
-select str:concat('@',name,' Take your time. Traffic is easing. Now bus takes ',currentTravelTimeByBus,'min to go and it might take ',predictedTravelTimeByBus,'min in an hour. #TFLDemo') as tweets
+from travelTimeStream[currentTravelTimeByBus <= travelTimeByBike and predictedTravelTimeByBus <= currentTravelTimeByBus]
+select str:concat('@',name,' Take your time. Traffic is easing. Now bus takes ',currentTravelTimeByBus,'min to go and it might take ',predictedTravelTimeByBus,'min in an hour. #TFLDemo', ' RQ', rqid) as tweets
 insert into twitterOutputStream;

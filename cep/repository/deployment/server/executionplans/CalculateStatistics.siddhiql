@@ -6,6 +6,8 @@
 
 /* define streams/tables and write queries here ... */
 
+@Plan:statistics('true')
+
 @Import('standardSpatialEvents:1.0.0')
 define stream inputStream (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string);
 

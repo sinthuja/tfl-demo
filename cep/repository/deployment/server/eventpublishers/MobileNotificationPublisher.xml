@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="MobileNotificationPublisher" statistics="disable"
+  trace="enable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="mobileNotificationStream" version="1.0.0"/>
+  <mapping customMapping="enable" type="text">
+    <inline>&lt;soapenv:Envelope xmlns:app="http://app.android.wso2.com" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+        &lt;soapenv:Header/&gt;
+        &lt;soapenv:Body&gt;
+          &lt;app:putMessage&gt;
+            &lt;!--Optional:--&gt;
+            &lt;app:message&gt;{{currentTravelTimeByBus}}:{{predictedTravelTimeByBus}}:{{historicTravelTimeByBus}}:{{travelTimeByBike}}:{{travelTimeOnFoot}}&lt;/app:message&gt;
+          &lt;/app:putMessage&gt;
+        &lt;/soapenv:Body&gt;
+      &lt;/soapenv:Envelope&gt;</inline>
+  </mapping>
+  <to eventAdapterType="http">
+    <property name="http.client.method">HttpPost</property>
+    <property name="http.headers">Content-Type: text/xml;charset=UTF-8, SOAPAction: "urn:putMessage", Connection: Keep-Alive</property>
+    <property name="http.url">http://ec2-52-77-236-192.ap-southeast-1.compute.amazonaws.com:9763/services/AndroidAppService.AndroidAppServiceHttpSoap11Endpoint/</property>
+  </to>
+</eventPublisher>

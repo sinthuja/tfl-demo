@@ -6,7 +6,9 @@
 
 /* define streams/tables and write queries here ... */
 
-@Plan:trace('false')
+@Plan:trace('true')
+
+@Plan:statistics('true')
 
 @Import('timeBetweenStopsStream:1.0.0')
 define stream timeBetweenStopsStream (stopId string, prevStopId string, stopIdLatitude double, stopIdLongitude double, prevStopIdLatitude double, prevStopIdLongitude double, timeStamp long, t_hour int, timeTaken long);
@@ -30,7 +32,7 @@ select fromStop, toStop, travelTimeByBus
 insert into travelTimeTable;
 
 from timeBetweenStopsStream
-select prevStopId as fromStop, stopId as toStop, timeTaken*1l as travelTimeByBus
+select prevStopId as fromStop, stopId as toStop, timeTaken/6000l as travelTimeByBus
 insert into travelTimeTable;
 
 from historicTravelTimeResponseStream as h join travelTimeTable as t

@@ -6,7 +6,7 @@
 
 /* define streams/tables and write queries here ... */
 
-@Plan:trace('false')
+@Plan:trace('true')
 
 @Import('currentTravelTimeResponseStream:1.0.0')
 define stream currentTravelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, currentTravelTimeByBus long, historicTravelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
@@ -40,8 +40,8 @@ select direction, line, sequence, t_hour
 insert into prePredictionStream;
 
 @Info(name='CalculateProductionTime')
-from prePredictionStream --#ml:predict('registry:2.Model.2015-12-22_19-47-59', 'double')
-select direction, line, sequence, t_hour, 0l as timetaken --convert(timetaken, 'long') as timetaken
+from prePredictionStream#ml:predict('registry:2.Model.2015-12-22_19-47-59', 'double')
+select direction, line, sequence, t_hour, convert(timetaken, 'long')/60000 as timetaken
 insert into predictionStream;
 
 from preTravelTimeResponseStream#window.time(5 sec) as e1 join predictionStream#window.time(5 sec) as e2

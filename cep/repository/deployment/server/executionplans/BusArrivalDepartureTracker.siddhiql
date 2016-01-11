@@ -6,6 +6,8 @@
 
 /* define streams/tables and write queries here ... */
 
+@Plan:statistics('true')
+
 @Import('rawBusStream:1.0.0')
 define stream rawBusStream (id string, name string, direction int, timeStamp long, latitude double,
 							longitude double, type string, speed float, heading float);

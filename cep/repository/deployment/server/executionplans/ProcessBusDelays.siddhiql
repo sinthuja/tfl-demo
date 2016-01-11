@@ -1,0 +1,82 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('ProcessBusDelays')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('busArrivalDepartureStream:1.0.0')
+define stream busArrivalDepartureStream (stopId string, busId string, timeStamp long, isArrived bool);
+
+@Import('timeTriggerStream:1.0.0')
+define stream timeTriggerStream (invoke bool, timeStamp long);
+
+@Export('lateDecisionStream:1.0.0')
+define stream lateDecisionStream (stopId string, busId string, timeStamp long, lastArrivedTimestamp long, isArrived bool);
+
+@Export('delaysCountStream:1.0.0')
+define stream delaysCountStream (line string, delays long, timeStamp long);
+
+@Export('currentDelaysStream:1.0.0')
+define stream currentDelaysStream (delays long);
+
+@Export('fusedSpatialEvent:1.0.0')
+define stream fusedStream (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, 
+						   heading float, state string, information string, notify bool);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='BusStopTimeTable')
+define table busTimeTable (id string, name string, direction int, t_day string, t_hour int, t_minute int, minutesInDay int);
+
+@From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+define table stopTable (name string, id string, naptan string, sequence int, line string, direction int,
+						latitude double, longitude double);
+
+@IndexBy('stopId')
+define table stopArivalTable (stopId string, busId string, timeStamp long, isArrived bool);
+
+from timeTriggerStream
+select time:extract(timeStamp,'HOUR') as t_hour, time:extract(timeStamp, 'MINUTE') as t_minute, timeStamp
+insert into postTimeTriggerStream;
+
+from postTimeTriggerStream join busTimeTable
+on postTimeTriggerStream.t_hour == busTimeTable.t_hour AND postTimeTriggerStream.t_minute == busTimeTable.t_minute
+select timeStamp, id as stopId, name as stopName, direction
+insert into stopTriggerStream;
+
+from stopTriggerStream join stopArivalTable
+on stopTriggerStream.stopId == stopArivalTable.stopId
+select stopTriggerStream.stopId, stopArivalTable.busId, stopTriggerStream.timeStamp, stopArivalTable.timeStamp as lastArrivedTimestamp, stopArivalTable.isArrived
+insert into lateDecisionStream;
+
+from lateDecisionStream[isArrived!=true AND (timeStamp- lastArrivedTimestamp) > 60000]#window.length(1) join  stopTable
+on stopTable.id == lateDecisionStream.stopId
+select timeStamp, stopTable.id, stopTable.latitude, stopTable.longitude, stopTable.name, "DELAYED" as status, stopTable.line, str:concat("Bus delayed, no buses arrived for last ", math:round((timeStamp - lastArrivedTimestamp) / 60000F), " minute(s)") as information
+insert into lateAlertStream;
+
+@Info(name='DelayCalculator')
+from every e1=lateAlertStream -> e2=busArrivalDepartureStream[e2.stopId == e1.id]
+select e2.timeStamp - e1.timeStamp as delay, e1.id, e1.latitude, e1.longitude, e1.name, e2.timeStamp, e1.line
+insert into delayStream;
+
+from delayStream 
+select timeStamp, id, latitude, longitude, name, "ON TIME" as status, line, "Buses are running on time" as information
+insert into lateAlertStream;
+
+from lateAlertStream
+select id, name, 1 as direction, latitude, longitude, timeStamp, 'STOP' as type, 0f as speed, 0f as heading, status as state, information, false as notify
+insert into fusedStream;
+
+from lateAlertStream[status == "DELAYED"]#window.externalTime(timeStamp, 5 sec)
+select line, count() as delays, timeStamp
+group by line
+output last every 1 seconds
+insert into delaysCountStream;
+
+from lateAlertStream[status == "DELAYED"]#window.externalTime(timeStamp, 5 sec)
+select count() as delays
+output last every 1 seconds
+insert into currentDelaysStream;
+
+from busArrivalDepartureStream
+insert into stopArivalTable;

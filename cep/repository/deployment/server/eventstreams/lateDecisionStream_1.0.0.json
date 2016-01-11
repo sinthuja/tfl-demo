@@ -1,0 +1,28 @@
+{
+  "name": "lateDecisionStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "stopId",
+      "type": "STRING"
+    },
+    {
+      "name": "busId",
+      "type": "STRING"
+    },
+    {
+      "name": "timeStamp",
+      "type": "LONG"
+    },
+    {
+      "name": "lastArrivedTimestamp",
+      "type": "LONG"
+    },
+    {
+      "name": "isArrived",
+      "type": "BOOL"
+    }
+  ]
+}

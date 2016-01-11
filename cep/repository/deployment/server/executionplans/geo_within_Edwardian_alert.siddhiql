@@ -1,0 +1,21 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('geo_within_Edwardian_alert')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('standardSpatialEvents:1.0.0')
+define stream dataIn (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string );
+
+@Export('processedSpatialEvents:1.0.0')
+define stream dataOut (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string, state string, information string);
+
+from dataIn[geo:within(longitude,latitude,"{'type':'Polygon','coordinates':[[[-0.1288747787475586,51.51598705295388],[-0.1288747787475586,51.51744918613516],[-0.12609601020812988,51.51744918613516],[-0.12609601020812988,51.51598705295388],[-0.1288747787475586,51.51598705295388]]]}")==true]#geodashboard:subscribe()
+select id, name, direction, latitude, longitude, timeStamp, type, speed, heading, eventId, "ALERTED" as state, "This vehicle is in Fence1 restricted area!!!" as information
+insert into dataOut;
+
+from dataIn[geo:within(longitude,latitude,"{'type':'Polygon','coordinates':[[[-0.1288747787475586,51.51598705295388],[-0.1288747787475586,51.51744918613516],[-0.12609601020812988,51.51744918613516],[-0.12609601020812988,51.51598705295388],[-0.1288747787475586,51.51598705295388]]]}")!=true]
+select id, name, direction, latitude, longitude, timeStamp, type, speed, heading, eventId, "NORMAL" as state, "" as information
+insert into dataOut;

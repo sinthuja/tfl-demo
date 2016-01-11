@@ -1,0 +1,26 @@
+
+                                /* Enter a unique ExecutionPlan */
+                                @Plan:name('BusDelayTracker-HolbornCircus')
+                 
+                                /* Enter a unique description for ExecutionPlan */
+                                -- @Plan:description('ExecutionPlan')
+                 
+                                /* define streams and write query here ... */
+                 
+                                @Import('lateDecisionStream:1.0.0')
+                                define stream lateDecisionStream (stopId string, busId string, timeStamp long, lastArrivedTimestamp long, isArrived bool);
+
+                 
+                                @Export('lateEmailAlertStream:1.0.0')
+                                define stream lateEmailAlertStream (name string, delayInMinutes int, subscribers string);
+
+                                @From(eventtable='rdbms', datasource.name='WSO2_GEO_DB', table.name='StopTable')
+                                define table stopTable (name string, id string, naptan string, sequence int, line string, direction int, latitude double, longitude double);
+                 
+                                from lateDecisionStream[isArrived!=true AND (timeStamp- lastArrivedTimestamp) > (2*60000)]#window.length(1) join  stopTable
+                                on stopTable.id == lateDecisionStream.stopId
+                                select stopTable.name, math:round((timeStamp - lastArrivedTimestamp) / 60000F) as delayInMinutes, "wso2cep.demo@gmail.com" as subscribers  
+                                having name == "Holborn Circus"
+                                insert into lateEmailAlertStream;
+
+                                 

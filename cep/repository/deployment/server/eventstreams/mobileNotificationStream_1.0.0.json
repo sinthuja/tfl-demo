@@ -1,0 +1,28 @@
+{
+  "name": "mobileNotificationStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "currentTravelTimeByBus",
+      "type": "LONG"
+    },
+    {
+      "name": "predictedTravelTimeByBus",
+      "type": "LONG"
+    },
+    {
+      "name": "historicTravelTimeByBus",
+      "type": "LONG"
+    },
+    {
+      "name": "travelTimeByBike",
+      "type": "LONG"
+    },
+    {
+      "name": "travelTimeOnFoot",
+      "type": "LONG"
+    }
+  ]
+}

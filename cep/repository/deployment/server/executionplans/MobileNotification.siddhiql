@@ -1,0 +1,21 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('MobileNotification') 
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Plan:trace('true')
+
+@Import('travelTimeResponseStream:1.0.0')
+define stream travelTimeResponseStream (fromStop string, toStop string, fromStopId string, toStopId string, name string, predictedTravelTimeByBus long, currentTravelTimeByBus long, historicTravelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
+
+@Export('mobileNotificationStream:1.0.0')
+define stream mobileNotificationStream (currentTravelTimeByBus long, predictedTravelTimeByBus long, historicTravelTimeByBus long, travelTimeByBike long, travelTimeOnFoot long);
+
+from travelTimeResponseStream[name=='mobile']
+select currentTravelTimeByBus, predictedTravelTimeByBus, historicTravelTimeByBus, travelTimeByBike, travelTimeOnFoot
+insert into mobileNotificationStream;
+
+                    

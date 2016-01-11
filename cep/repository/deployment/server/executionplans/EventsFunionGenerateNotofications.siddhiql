@@ -8,6 +8,8 @@
 
 @Plan:trace('false')
 
+@Plan:statistics('true')
+
 @Import('processedSpatialEvents:1.0.0')
 define stream dataIn (id string, name string, direction int, latitude double, longitude double, timeStamp long, type string, speed float, heading float, eventId string, state string, information string);
 
